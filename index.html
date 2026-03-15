@@ -13,10 +13,10 @@
             <ul>
                 <li><a href="#home" class="lang" data-fr="Accueil" data-en="Home">Accueil</a></li>
                 <li><a href="#tools" class="lang" data-fr="Tools" data-en="Tools">Tools</a></li>
-                <li><a href="https://discord.gg/eDGSt5vw">Discord</a></li>
+                <li><a href="https://discord.gg/eDGSt5vw" class="lang" data-fr="Discord" data-en="Discord">Discord</a></li>
                 <li class="nav-langs">
-                    <img src="https://flagcdn.com/w20/fr.png" onclick="setLanguage('fr')" style="cursor:pointer; margin-left:15px; opacity:0.8;" alt="FR">
-                    <img src="https://flagcdn.com/w20/us.png" onclick="setLanguage('en')" style="cursor:pointer; margin-left:10px; opacity:0.8;" alt="EN">
+                    <img src="https://flagcdn.com/w20/fr.png" onclick="setLanguage('fr')" style="cursor:pointer;" alt="FR">
+                    <img src="https://flagcdn.com/w20/us.png" onclick="setLanguage('en')" style="cursor:pointer;" alt="EN">
                 </li>
             </ul>
         </nav>
@@ -80,7 +80,6 @@
             localStorage.setItem('selectedLang', lang);
         }
 
-        // Garder la langue au rafraîchissement
         window.onload = () => {
             const savedLang = localStorage.getItem('selectedLang') || 'fr';
             setLanguage(savedLang);

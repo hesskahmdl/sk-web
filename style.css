@@ -1,21 +1,21 @@
-/* Base */
+/* BASE & DARK THEME */
 body { 
-    background: #0a0a0a; 
+    background: #080808; 
     color: #fff; 
-    font-family: 'Segoe UI', sans-serif; 
+    font-family: 'Segoe UI', Arial, sans-serif; 
     margin: 0; 
     scroll-behavior: smooth; 
     overflow-x: hidden;
     top: 0 !important;
 }
 
-/* Navigation */
+/* NAVIGATION */
 nav { 
     display: flex; 
     justify-content: space-between; 
     align-items: center;
-    padding: 20px 30px;
-    background: rgba(0,0,0,0.95); 
+    padding: 20px 40px;
+    background: rgba(0,0,0,0.98); 
     position: fixed; 
     width: 100%; 
     top: 0; 
@@ -24,8 +24,9 @@ nav {
     border-bottom: 1px solid #111;
 }
 
-.logo { color: #00ff88; font-weight: bold; font-size: 1.4rem; text-transform: uppercase; }
+.logo { color: #00ff88; font-weight: 900; font-size: 1.5rem; letter-spacing: 1px; }
 
+/* BOUTON CENTRAL */
 .nav-center {
     position: absolute;
     left: 50%;
@@ -35,49 +36,72 @@ nav {
 .discord-nav-btn {
     border: 1px solid #00ff88;
     color: #00ff88;
-    padding: 8px 15px;
-    border-radius: 5px;
+    padding: 8px 18px;
+    border-radius: 4px;
     text-decoration: none;
     font-size: 11px;
     font-weight: bold;
+    transition: 0.3s;
 }
 
-.nav-right { display: flex; align-items: center; gap: 20px; }
+.discord-nav-btn:hover {
+    background: #00ff88;
+    color: #000 !important;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+}
 
-.nav-links { display: flex; list-style: none; gap: 15px; margin: 0; padding: 0; }
-.nav-links a { color: #fff; text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
+/* MENU DROITE */
+.nav-right { display: flex; align-items: center; gap: 20px; }
+.nav-links { display: flex; list-style: none; gap: 20px; margin: 0; padding: 0; }
+.nav-links a { color: #fff; text-decoration: none; font-size: 12px; font-weight: bold; transition: 0.3s; }
 .nav-links a:hover { color: #00ff88; }
 
-/* Roulette */
+/* ROULETTE */
 .settings-menu { position: relative; cursor: pointer; }
-.settings-icon { color: #00ff88; font-size: 1.2rem; transition: 0.5s; }
-.settings-menu:hover .settings-icon { transform: rotate(90deg); }
+.settings-icon { color: #00ff88; font-size: 1.2rem; transition: 0.6s ease; }
+.settings-menu:hover .settings-icon { transform: rotate(180deg); }
+
 .settings-dropdown {
     position: absolute;
     right: 0; top: 40px;
     background: #111; border: 1px solid #00ff88;
-    padding: 15px; width: 160px; border-radius: 8px;
-    display: none; box-shadow: 0 0 20px #000;
+    padding: 15px; width: 180px; border-radius: 8px;
+    display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
 }
 .settings-menu:hover .settings-dropdown { display: block; }
-.settings-dropdown h4 { margin: 0; color: #00ff88; font-size: 0.8rem; }
-.settings-dropdown p { font-size: 0.7rem; margin: 10px 0; color: #ccc; }
+.settings-dropdown h4 { margin: 0 0 10px 0; color: #00ff88; font-size: 0.8rem; letter-spacing: 1px; }
+.settings-dropdown p { font-size: 0.75rem; margin: 8px 0; color: #ccc; display: flex; align-items: center; gap: 10px; }
+.settings-dropdown i { color: #00ff88; }
 
-/* Drapeaux */
-.lang-selector { display: flex; gap: 10px; margin-left: 10px; }
-.lang-selector img { width: 20px; cursor: pointer; transition: 0.3s; opacity: 0.7; }
-.lang-selector img:hover { opacity: 1; transform: scale(1.2); }
+/* DRAPEAUX */
+.lang-selector { display: flex; gap: 10px; border-left: 1px solid #222; padding-left: 15px; }
+.lang-selector img { width: 22px; cursor: pointer; opacity: 0.6; transition: 0.3s; border-radius: 2px; }
+.lang-selector img:hover { opacity: 1; transform: translateY(-2px); }
 
-/* Cache Google moche */
+/* CACHE GOOGLE BARRE */
 .goog-te-banner-frame.skiptranslate, .goog-te-gadget-icon { display: none !important; }
+.goog-te-gadget-simple { background: none !important; border: none !important; }
 
-/* Hero */
-.hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); }
-h1 { font-size: 3rem; color: #00ff88; margin-bottom: 20px; }
-.btn-primary { background: #00ff88; color: #000; padding: 15px 30px; text-decoration: none; font-weight: bold; border-radius: 8px; }
-.btn-secondary { border: 1px solid #00ff88; color: #00ff88; padding: 15px 30px; text-decoration: none; margin-left: 10px; border-radius: 8px; }
+/* HERO SECTION */
+.hero { 
+    height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; 
+    text-align: center; background: radial-gradient(circle, #111 0%, #000 100%); padding: 0 20px; 
+}
 
-/* Grille */
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 50px; }
-.card { background: #111; padding: 30px; border: 1px solid #222; border-radius: 12px; transition: 0.3s; }
-.card:hover { border-color: #00ff88; transform: translateY(-5px); }
+h1 { font-size: 3.5rem; color: #00ff88; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0,255,136,0.2); }
+p { color: #888; letter-spacing: 4px; font-size: 12px; margin-bottom: 30px; }
+
+/* BOUTONS HERO */
+.btn-primary { background: #00ff88; color: #000 !important; padding: 15px 35px; text-decoration: none; font-weight: bold; border-radius: 4px; transition: 0.3s; }
+.btn-primary:hover { box-shadow: 0 0 25px rgba(0, 255, 136, 0.6); transform: translateY(-2px); }
+.btn-secondary { border: 1px solid #00ff88; color: #00ff88; padding: 15px 35px; text-decoration: none; font-weight: bold; border-radius: 4px; margin-left: 15px; transition: 0.3s; }
+.btn-secondary:hover { background: rgba(0,255,136,0.1); }
+
+/* GRID TOOLS */
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 100px 40px; max-width: 1200px; margin: 0 auto; }
+.card { background: #0f0f0f; border: 1px solid #1a1a1a; padding: 40px; border-radius: 8px; transition: 0.4s; }
+.card:hover { border-color: #00ff88; background: #111; transform: translateY(-10px); }
+.card h3 { color: #fff; margin-bottom: 15px; font-size: 1.2rem; }
+.card p { color: #666; font-size: 0.9rem; letter-spacing: 0; line-height: 1.5; }
+
+footer { text-align: center; padding: 50px; color: #222; font-size: 0.8rem; border-top: 1px solid #111; }

@@ -1,12 +1,12 @@
-/* BASE & STYLE GLOBAL */
+/* BASE STYLE */
 body { 
     background: #080808; 
     color: #fff; 
-    font-family: 'Segoe UI', Arial, sans-serif; 
+    font-family: 'Segoe UI', sans-serif; 
     margin: 0; 
     scroll-behavior: smooth; 
     overflow-x: hidden;
-    top: 0 !important; /* Force le site en haut */
+    top: 0 !important; /* Bloque le décalage de Google */
 }
 
 /* NAVIGATION */
@@ -54,7 +54,7 @@ nav {
 .nav-links a { color: #fff; text-decoration: none; font-size: 12px; font-weight: bold; transition: 0.3s; }
 .nav-links a:hover { color: #00ff88; }
 
-/* ROULETTE PARAMÈTRES */
+/* ROULETTE */
 .settings-menu { position: relative; cursor: pointer; }
 .settings-icon { color: #00ff88; font-size: 1.2rem; transition: 0.6s ease; }
 .settings-menu:hover .settings-icon { transform: rotate(180deg); }
@@ -71,12 +71,12 @@ nav {
 .settings-dropdown p { font-size: 0.75rem; margin: 8px 0; color: #ccc; display: flex; align-items: center; gap: 10px; }
 .settings-dropdown i { color: #00ff88; }
 
-/* LANGUES / DRAPEAUX */
+/* DRAPEAUX */
 .lang-selector { display: flex; gap: 10px; border-left: 1px solid #222; padding-left: 15px; }
 .lang-selector img { width: 22px; cursor: pointer; opacity: 0.6; transition: 0.3s; border-radius: 2px; }
 .lang-selector img:hover { opacity: 1; transform: translateY(-2px); }
 
-/* HERO & BUTTONS */
+/* HERO */
 .hero { 
     height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; 
     text-align: center; background: radial-gradient(circle, #111 0%, #000 100%); 
@@ -86,23 +86,33 @@ h1 { font-size: 3.5rem; color: #00ff88; margin-bottom: 10px; }
 .btn-primary { background: #00ff88; color: #000 !important; padding: 15px 35px; text-decoration: none; font-weight: bold; border-radius: 4px; }
 .btn-secondary { border: 1px solid #00ff88; color: #00ff88; padding: 15px 35px; text-decoration: none; font-weight: bold; border-radius: 4px; margin-left: 15px; }
 
-/* GRID & CARDS */
+/* CARDS */
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; padding: 100px 40px; max-width: 1200px; margin: 0 auto; }
 .card { background: #0f0f0f; border: 1px solid #1a1a1a; padding: 40px; border-radius: 8px; transition: 0.4s; }
-.card:hover { border-color: #00ff88; background: #111; transform: translateY(-10px); }
+.card:hover { border-color: #00ff88; transform: translateY(-10px); }
 
 footer { text-align: center; padding: 50px; color: #222; font-size: 0.8rem; border-top: 1px solid #111; }
 
-/* --- BLOQUAGE GOOGLE BANNER --- */
-.goog-te-banner-frame.skiptranslate, 
-.goog-te-banner-frame, 
-#goog-gt-tt, 
-.goog-te-balloon-frame,
-.goog-te-gadget-icon {
+/* ============================================================
+   ANTI-GOOGLE BARRE (LA SOLUTION FINALE)
+   ============================================================ */
+
+/* Supprime la barre blanche en haut */
+iframe.goog-te-banner-frame {
     display: none !important;
-    visibility: hidden !important;
 }
 
+/* Supprime l'espace vide créé par Google */
+body {
+    top: 0px !important;
+}
+
+/* Supprime la popup de traduction au survol */
+#goog-gt-tt, .goog-te-balloon-frame {
+    display: none !important;
+}
+
+/* Supprime les soulignements sur le texte traduit */
 .goog-text-highlight {
     background: none !important;
     box-shadow: none !important;

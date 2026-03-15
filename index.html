@@ -7,102 +7,95 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
-
-    <header>
+<body class="lang-fr"> <header>
         <nav>
             <div class="logo">SK COMMUNITY</div>
 
             <div class="nav-center">
-                <a href="https://discord.gg/ZEFV4hu9" target="_blank" class="discord-nav-btn">REJOINDRE LE DISCORD</a>
+                <a href="https://discord.gg/ZEFV4hu9" target="_blank" class="discord-nav-btn lang" data-fr="REJOINDRE LE DISCORD" data-en="JOIN DISCORD">REJOINDRE LE DISCORD</a>
             </div>
 
             <div class="nav-right">
                 <ul class="nav-links">
-                    <li><a href="#home">ACCUEIL</a></li>
-                    <li><a href="#tools">TOOLS</a></li>
+                    <li><a href="#home" class="lang" data-fr="ACCUEIL" data-en="HOME">ACCUEIL</a></li>
+                    <li><a href="#tools" class="lang" data-fr="TOOLS" data-en="TOOLS">TOOLS</a></li>
                 </ul>
 
                 <div class="settings-menu">
                     <i class="fas fa-cog settings-icon"></i>
                     <div class="settings-dropdown">
-                        <h4>SYSTÈME</h4>
+                        <h4 class="lang" data-fr="SYSTÈME" data-en="SYSTEM">SYSTÈME</h4>
                         <hr style="border: 0.5px solid #222; margin-bottom: 10px;">
                         <p><i class="fas fa-signal"></i> Ping: 12ms</p>
                         <p><i class="fas fa-shield-virus"></i> Firewall: Active</p>
-                        <p style="color: #00ff88; font-size: 0.7rem; margin-top: 10px;">SK-OS v1.4</p>
                     </div>
                 </div>
 
                 <div class="lang-selector">
-                    <img src="https://flagcdn.com/w20/us.png" onclick="translatePage('en')" alt="EN">
-                    <img src="https://flagcdn.com/w20/fr.png" onclick="translatePage('fr')" alt="FR">
-                    <img src="https://flagcdn.com/w20/es.png" onclick="translatePage('es')" alt="ES">
-                    <img src="https://flagcdn.com/w20/ru.png" onclick="translatePage('ru')" alt="RU">
+                    <img src="https://flagcdn.com/w20/fr.png" onclick="setLanguage('fr')" alt="FR">
+                    <img src="https://flagcdn.com/w20/us.png" onclick="setLanguage('en')" alt="EN">
                 </div>
             </div>
         </nav>
     </header>
 
     <section id="home" class="hero">
-        <h1>L'ÉLITE DU MODDING ET DES TOOLS</h1>
-        <p>ACCÉDEZ À DES RESSOURCES EXCLUSIVES ET BOOSTEZ VOS CAPACITÉS</p>
+        <h1 class="lang" data-fr="L'ÉLITE DU MODDING ET DES TOOLS" data-en="THE ELITE OF MODDING & TOOLS">L'ÉLITE DU MODDING ET DES TOOLS</h1>
+        <p class="lang" data-fr="ACCÉDEZ À DES RESSOURCES EXCLUSIVES ET BOOSTEZ VOS CAPACITÉS" data-en="ACCESS EXCLUSIVE RESOURCES AND BOOST YOUR SKILLS">ACCÉDEZ À DES RESSOURCES EXCLUSIVES ET BOOSTEZ VOS CAPACITÉS</p>
         <div class="buttons">
-            <a href="https://discord.gg/ZEFV4hu9" class="btn-primary">REJOINDRE</a>
-            <a href="#tools" class="btn-secondary">VOIR LES OUTILS</a>
+            <a href="https://discord.gg/ZEFV4hu9" class="btn-primary lang" data-fr="REJOINDRE" data-en="JOIN NOW">REJOINDRE</a>
+            <a href="#tools" class="btn-secondary lang" data-fr="VOIR LES OUTILS" data-en="VIEW TOOLS">VOIR LES OUTILS</a>
         </div>
     </section>
 
     <section id="tools">
-        <h2 style="text-align: center; color: #00ff88; margin-top: 80px; text-transform: uppercase; letter-spacing: 2px;">Nos Catégories</h2>
+        <h2 style="text-align: center; color: #00ff88; margin-top: 80px; text-transform: uppercase;" class="lang" data-fr="Nos Catégories" data-en="Our Categories">Nos Catégories</h2>
         <div class="grid">
-            <a href="rat.html" style="text-decoration: none; color: inherit;">
-                <div class="card">
-                    <div style="color: #00ff88; font-size: 0.7rem; margin-bottom: 10px;">PROJETS</div>
-                    <h3>RAT & BUILDERS</h3>
-                    <p>Quasar, AsyncRAT et collections de builders.</p>
-                </div>
-            </a>
-            <a href="gta.html" style="text-decoration: none; color: inherit;">
-                <div class="card">
-                    <div style="color: #00ff88; font-size: 0.7rem; margin-bottom: 10px;">MODDING</div>
-                    <h3>GTA V MODS</h3>
-                    <p>Menus premium et scripts pour GTA Online.</p>
-                </div>
-            </a>
-            <a href="discord-tools.html" style="text-decoration: none; color: inherit;">
-                <div class="card">
-                    <div style="color: #00ff88; font-size: 0.7rem; margin-bottom: 10px;">DISCORD</div>
-                    <h3>DISCORD TOOLS</h3>
-                    <p>Nukers, Token Managers et protections.</p>
-                </div>
-            </a>
+            <div class="card">
+                <div style="color: #00ff88; font-size: 0.7rem; margin-bottom: 10px;">PROJETS</div>
+                <h3 class="lang" data-fr="RAT & BUILDERS" data-en="RAT & BUILDERS">RAT & BUILDERS</h3>
+                <p class="lang" data-fr="Quasar, AsyncRAT et collections de builders." data-en="Quasar, AsyncRAT and builders collection.">Quasar, AsyncRAT et collections de builders.</p>
+            </div>
+            <div class="card">
+                <div style="color: #00ff88; font-size: 0.7rem; margin-bottom: 10px;">MODDING</div>
+                <h3 class="lang" data-fr="GTA V MODS" data-en="GTA V MODS">GTA V MODS</h3>
+                <p class="lang" data-fr="Menus premium et scripts pour GTA Online." data-en="Premium menus and scripts for GTA Online.">Menus premium et scripts pour GTA Online.</p>
+            </div>
+            <div class="card">
+                <div style="color: #00ff88; font-size: 0.7rem; margin-bottom: 10px;">DISCORD</div>
+                <h3 class="lang" data-fr="DISCORD TOOLS" data-en="DISCORD TOOLS">DISCORD TOOLS</h3>
+                <p class="lang" data-fr="Nukers, Token Managers et protections." data-en="Nukers, Token Managers and protections.">Nukers, Token Managers et protections.</p>
+            </div>
         </div>
     </section>
 
-    <footer>
-        <p>&copy; 2026 SK COMMUNITY</p>
-    </footer>
-
-    <div id="google_translate_element" style="display:none;"></div>
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'fr',
-                includedLanguages: 'en,fr,es,ru',
-                autoDisplay: false
-            }, 'google_translate_element');
+    <script>
+        function setLanguage(lang) {
+            // On change la classe du body
+            document.body.className = 'lang-' + lang;
+            
+            // On cherche tous les éléments qui ont la classe "lang"
+            const elements = document.querySelectorAll('.lang');
+            
+            elements.forEach(el => {
+                // On remplace le texte par celui contenu dans l'attribut data-fr ou data-en
+                if (lang === 'en') {
+                    el.textContent = el.getAttribute('data-en');
+                } else {
+                    el.textContent = el.getAttribute('data-fr');
+                }
+            });
+            
+            // Optionnel : Sauvegarder le choix
+            localStorage.setItem('preferredLang', lang);
         }
 
-        function translatePage(lang) {
-            var selectField = document.querySelector(".goog-te-combo");
-            if (selectField) {
-                selectField.value = lang;
-                selectField.dispatchEvent(new Event('change'));
-            }
-        }
+        // Charger la langue sauvegardée au démarrage
+        window.onload = () => {
+            const savedLang = localStorage.getItem('preferredLang') || 'fr';
+            setLanguage(savedLang);
+        };
     </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 </body>
 </html>

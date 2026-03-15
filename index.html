@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+
     <header>
         <nav>
             <div class="logo">SK COMMUNITY</div>
@@ -18,83 +19,62 @@
 
             <div class="nav-right">
                 <ul class="nav-links">
-                    <li><a href="#home">Accueil</a></li>
-                    <li><a href="#tools">Tools</a></li>
-                    <li><a href="https://discord.gg/ZEFV4hu9">Discord</a></li>
+                    <li><a href="#home">ACCUEIL</a></li>
+                    <li><a href="#tools">TOOLS</a></li>
                 </ul>
 
-                <div class="settings-menu">
-                    <i class="fas fa-cog settings-icon"></i>
-                    <div class="settings-dropdown">
-                        <h4>Paramètres</h4>
-                        <hr style="border: 0.5px solid #222; margin-bottom: 10px;">
-                        <p><i class="fas fa-shield-alt"></i> Sécurité : ON</p>
-                        <p><i class="fas fa-eye"></i> Thème : Sombre</p>
-                        <p><i class="fas fa-user-secret"></i> Mode Privé</p>
-                        <p style="color: #00ff88; font-size: 0.7rem; margin-top: 10px;">Version : 1.0.4</p>
-                    </div>
+                <div class="lang-selector">
+                    <img src="https://flagcdn.com/w20/us.png" alt="EN" title="English">
+                    <img src="https://flagcdn.com/w20/fr.png" alt="FR" title="Français">
+                    <img src="https://flagcdn.com/w20/es.png" alt="ES" title="Español">
+                    <img src="https://flagcdn.com/w20/ru.png" alt="RU" title="Русский">
                 </div>
 
-                <div id="google_translate_element"></div>
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">SYSTEM ONLINE</span>
+                </div>
             </div>
         </nav>
     </header>
 
     <section id="home" class="hero">
-        <h1>L'ÉLITE DU MODDING ET DES TOOLS</h1>
-        <p>Accédez à des ressources exclusives et apprenez avec la communauté.</p>
-        <div class="buttons">
-            <a href="https://discord.gg/ZEFV4hu9" class="btn-primary">Rejoindre maintenant</a>
-            <a href="#tools" class="btn-secondary">Voir les outils</a>
+        <div class="hero-content">
+            <h1>L'ÉLITE DU MODDING</h1>
+            <p>RESSOURCES EXCLUSIVES | TOOLS | GTA V</p>
+            <div class="buttons">
+                <a href="https://discord.gg/ZEFV4hu9" class="btn-primary">REJOINDRE</a>
+                <a href="#tools" class="btn-secondary">OUTILS</a>
+            </div>
         </div>
     </section>
 
     <section id="tools">
-        <h2 style="text-align: center; color: #00ff88; margin-top: 80px; text-transform: uppercase; letter-spacing: 2px;">Nos Catégories</h2>
         <div class="grid">
-            <a href="rat.html" style="text-decoration: none; color: inherit;">
+            <a href="rat.html" class="card-link">
                 <div class="card">
-                    <div style="color: #00ff88; font-size: 0.7rem; margin-bottom: 10px;">ACCÈS LIBRE</div>
-                    <h3>RAT & Builders</h3>
-                    <p>Configuration et support pour Quasar et plus.</p>
-                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;">EXPLORER →</span>
+                    <h3>RAT & BUILDERS</h3>
+                    <p>Quasar, AsyncRAT & plus.</p>
                 </div>
             </a>
-
-            <a href="gta.html" style="text-decoration: none; color: inherit;">
+            <a href="gta.html" class="card-link">
                 <div class="card">
-                    <div style="color: #00ff88; font-size: 0.7rem; margin-bottom: 10px;">STABLE</div>
-                    <h3>GTA V Mods</h3>
-                    <p>Menus et scripts pour dominer Los Santos.</p>
-                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;">EXPLORER →</span>
+                    <h3>GTA V MODS</h3>
+                    <p>Menus indétectables.</p>
                 </div>
             </a>
-
-            <a href="discord-tools.html" style="text-decoration: none; color: inherit;">
+            <a href="discord-tools.html" class="card-link">
                 <div class="card">
-                    <div style="color: #00ff88; font-size: 0.7rem; margin-bottom: 10px;">ASTRADEV</div>
-                    <h3>Discord Tools</h3>
-                    <p>Token management, nukers et sécurité.</p>
-                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;">EXPLORER →</span>
+                    <h3>DISCORD TOOLS</h3>
+                    <p>Nukers & Token Manager.</p>
                 </div>
             </a>
         </div>
     </section>
 
     <footer>
-        <p style="text-align: center; padding: 60px; color: #444; font-size: 0.8rem; letter-spacing: 1px;">
-            &copy; 2026 SK COMMUNITY
-        </p>
+        <p>&copy; 2026 SK COMMUNITY</p>
     </footer>
 
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'fr',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-            }, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

@@ -19,9 +19,8 @@
 
             <div class="nav-right">
                 <ul class="nav-links">
-                    <li><a href="#home">Accueil</a></li>
-                    <li><a href="#tools">Tools</a></li>
-                    <li><a href="https://discord.gg/ZEFV4hu9">Discord</a></li>
+                    <li><a href="#home">ACCUEIL</a></li>
+                    <li><a href="#tools">TOOLS</a></li>
                 </ul>
 
                 <div class="settings-menu">
@@ -29,16 +28,17 @@
                     <div class="settings-dropdown">
                         <h4>SYSTÈME</h4>
                         <hr style="border: 0.5px solid #222; margin-bottom: 10px;">
-                        <p><i class="fas fa-signal" style="color: #00ff88;"></i> Latence : 14ms</p>
-                        <p><i class="fas fa-server" style="color: #00ff88;"></i> Serveur : Stable</p>
-                        <p><i class="fas fa-code-branch" style="color: #00ff88;"></i> Build : v1.2</p>
+                        <p><i class="fas fa-signal"></i> Ping: 12ms</p>
+                        <p><i class="fas fa-shield-virus"></i> Firewall: Active</p>
+                        <p style="color: #00ff88; font-size: 0.7rem; margin-top: 10px;">SK-OS v1.4</p>
                     </div>
                 </div>
 
                 <div class="lang-selector">
-                    <img src="https://flagcdn.com/w20/us.png" onclick="translatePage('en')" title="English">
-                    <img src="https://flagcdn.com/w20/fr.png" onclick="translatePage('fr')" title="Français">
-                    <img src="https://flagcdn.com/w20/es.png" onclick="translatePage('es')" title="Español">
+                    <img src="https://flagcdn.com/w20/us.png" onclick="translatePage('en')" alt="EN">
+                    <img src="https://flagcdn.com/w20/fr.png" onclick="translatePage('fr')" alt="FR">
+                    <img src="https://flagcdn.com/w20/es.png" onclick="translatePage('es')" alt="ES">
+                    <img src="https://flagcdn.com/w20/ru.png" onclick="translatePage('ru')" alt="RU">
                 </div>
             </div>
         </nav>
@@ -46,39 +46,42 @@
 
     <section id="home" class="hero">
         <h1>L'ÉLITE DU MODDING ET DES TOOLS</h1>
-        <p>Accédez à des ressources exclusives et apprenez avec la communauté.</p>
+        <p>ACCÉDEZ À DES RESSOURCES EXCLUSIVES ET BOOSTEZ VOS CAPACITÉS</p>
         <div class="buttons">
-            <a href="https://discord.gg/ZEFV4hu9" class="btn-primary">Rejoindre maintenant</a>
-            <a href="#tools" class="btn-secondary">Voir les outils</a>
+            <a href="https://discord.gg/ZEFV4hu9" class="btn-primary">REJOINDRE</a>
+            <a href="#tools" class="btn-secondary">VOIR LES OUTILS</a>
         </div>
     </section>
 
     <section id="tools">
-        <h2 style="text-align: center; color: #00ff88; margin-top: 80px; text-transform: uppercase;">Nos Catégories</h2>
+        <h2 style="text-align: center; color: #00ff88; margin-top: 80px; text-transform: uppercase; letter-spacing: 2px;">Nos Catégories</h2>
         <div class="grid">
             <a href="rat.html" style="text-decoration: none; color: inherit;">
                 <div class="card">
-                    <h3>RAT & Builders</h3>
-                    <p>Configuration et support pour Quasar et plus.</p>
+                    <div style="color: #00ff88; font-size: 0.7rem; margin-bottom: 10px;">PROJETS</div>
+                    <h3>RAT & BUILDERS</h3>
+                    <p>Quasar, AsyncRAT et collections de builders.</p>
                 </div>
             </a>
             <a href="gta.html" style="text-decoration: none; color: inherit;">
                 <div class="card">
-                    <h3>GTA V Mods</h3>
-                    <p>Menus et scripts pour dominer Los Santos.</p>
+                    <div style="color: #00ff88; font-size: 0.7rem; margin-bottom: 10px;">MODDING</div>
+                    <h3>GTA V MODS</h3>
+                    <p>Menus premium et scripts pour GTA Online.</p>
                 </div>
             </a>
             <a href="discord-tools.html" style="text-decoration: none; color: inherit;">
                 <div class="card">
-                    <h3>Discord Tools</h3>
-                    <p>Token management, nukers et sécurité.</p>
+                    <div style="color: #00ff88; font-size: 0.7rem; margin-bottom: 10px;">DISCORD</div>
+                    <h3>DISCORD TOOLS</h3>
+                    <p>Nukers, Token Managers et protections.</p>
                 </div>
             </a>
         </div>
     </section>
 
     <footer>
-        <p style="text-align: center; padding: 40px; color: #444;">&copy; 2026 SK COMMUNITY</p>
+        <p>&copy; 2026 SK COMMUNITY</p>
     </footer>
 
     <div id="google_translate_element" style="display:none;"></div>
@@ -86,15 +89,18 @@
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
                 pageLanguage: 'fr',
+                includedLanguages: 'en,fr,es,ru',
                 autoDisplay: false
             }, 'google_translate_element');
         }
 
         function translatePage(lang) {
-            var selectField = document.querySelector("select.goog-te-combo");
+            var selectField = document.querySelector(".goog-te-combo");
             if (selectField) {
                 selectField.value = lang;
                 selectField.dispatchEvent(new Event('change'));
+            } else {
+                console.error("Le traducteur charge encore...");
             }
         }
     </script>

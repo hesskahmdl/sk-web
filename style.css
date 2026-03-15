@@ -32,6 +32,7 @@ nav {
 
 nav ul { 
     display: flex; 
+    align-items: center; /* Aligne les drapeaux verticalement avec les liens */
     list-style: none; 
     gap: 25px; 
     margin: 0; 
@@ -121,4 +122,26 @@ h1 {
 .card:hover { 
     border-color: #00ff88; 
     background: #161616;
+}
+
+/* --- AJOUT POUR LE SYSTÈME DE TRADUCTION --- */
+
+.nav-langs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 1px solid #333; /* Petite séparation visuelle */
+    padding-left: 15px;
+}
+
+.nav-langs img {
+    width: 20px;
+    height: auto;
+    transition: 0.3s;
+    opacity: 0.7;
+}
+
+.nav-langs img:hover {
+    opacity: 1;
+    transform: scale(1.2);
 }

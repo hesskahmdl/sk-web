@@ -10,15 +10,21 @@
     <header>
         <nav>
             <div class="logo">SK COMMUNITY</div>
-            <ul>
-                <li><a href="#home" class="lang" data-fr="Accueil" data-en="Home">Accueil</a></li>
-                <li><a href="#tools" class="lang" data-fr="Tools" data-en="Tools">Tools</a></li>
-                <li><a href="https://discord.gg/eDGSt5vw" class="lang" data-fr="Discord" data-en="Discord">Discord</a></li>
-                <li class="nav-langs">
-                    <img src="https://flagcdn.com/w20/fr.png" onclick="setLanguage('fr')" style="cursor:pointer;" alt="FR">
-                    <img src="https://flagcdn.com/w20/us.png" onclick="setLanguage('en')" style="cursor:pointer;" alt="EN">
-                </li>
-            </ul>
+
+            <div class="nav-center">
+                <a href="https://discord.gg/eDGSt5vw" target="_blank" class="discord-nav-btn lang" data-fr="REJOINDRE LE DISCORD" data-en="JOIN DISCORD">REJOINDRE LE DISCORD</a>
+            </div>
+
+            <div class="nav-right">
+                <ul>
+                    <li><a href="#home" class="lang" data-fr="Accueil" data-en="Home">Accueil</a></li>
+                    <li><a href="#tools" class="lang" data-fr="Tools" data-en="Tools">Tools</a></li>
+                    <li class="nav-langs">
+                        <img src="https://flagcdn.com/w20/fr.png" onclick="setLanguage('fr')" style="cursor:pointer;" alt="FR">
+                        <img src="https://flagcdn.com/w20/us.png" onclick="setLanguage('en')" style="cursor:pointer;" alt="EN">
+                    </li>
+                </ul>
+            </div>
         </nav>
     </header>
 
@@ -34,7 +40,6 @@
     <section id="tools">
         <h2 style="text-align: center; color: #00ff88; margin-top: 50px;" class="lang" data-fr="NOS CATÉGORIES" data-en="OUR CATEGORIES">NOS CATÉGORIES</h2>
         <div class="grid">
-            
             <a href="rat.html" style="text-decoration: none; color: inherit;">
                 <div class="card">
                     <h3 class="lang" data-fr="RAT & Builders" data-en="RAT & Builders">RAT & Builders</h3>
@@ -42,7 +47,6 @@
                     <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES OUTILS →" data-en="VIEW TOOLS →">VOIR LES OUTILS →</span>
                 </div>
             </a>
-
             <a href="gta.html" style="text-decoration: none; color: inherit;">
                 <div class="card">
                     <h3 class="lang" data-fr="GTA V Mods" data-en="GTA V Mods">GTA V Mods</h3>
@@ -50,7 +54,6 @@
                     <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES MODS →" data-en="VIEW MODS →">VOIR LES MODS →</span>
                 </div>
             </a>
-
             <a href="discord-tools.html" style="text-decoration: none; color: inherit;">
                 <div class="card">
                     <h3 class="lang" data-fr="Discord Tools" data-en="Discord Tools">Discord Tools</h3>
@@ -58,7 +61,6 @@
                     <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES TOOLS →" data-en="VIEW TOOLS →">VOIR LES TOOLS →</span>
                 </div>
             </a>
-
         </div>
     </section>
 
@@ -73,13 +75,10 @@
             const elements = document.querySelectorAll('.lang');
             elements.forEach(el => {
                 const translation = el.getAttribute('data-' + lang);
-                if (translation) {
-                    el.innerHTML = translation;
-                }
+                if (translation) { el.innerHTML = translation; }
             });
             localStorage.setItem('selectedLang', lang);
         }
-
         window.onload = () => {
             const savedLang = localStorage.getItem('selectedLang') || 'fr';
             setLanguage(savedLang);

@@ -40,6 +40,7 @@
     <section id="tools">
         <h2 style="text-align: center; color: #00ff88; margin-top: 50px;" class="lang" data-fr="NOS CATÉGORIES" data-en="OUR CATEGORIES">NOS CATÉGORIES</h2>
         <div class="grid">
+            
             <a href="rat.html" style="text-decoration: none; color: inherit;">
                 <div class="card">
                     <h3 class="lang" data-fr="RAT & Builders" data-en="RAT & Builders">RAT & Builders</h3>
@@ -47,6 +48,7 @@
                     <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES OUTILS →" data-en="VIEW TOOLS →">VOIR LES OUTILS →</span>
                 </div>
             </a>
+
             <a href="gta.html" style="text-decoration: none; color: inherit;">
                 <div class="card">
                     <h3 class="lang" data-fr="GTA V Mods" data-en="GTA V Mods">GTA V Mods</h3>
@@ -54,6 +56,7 @@
                     <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES MODS →" data-en="VIEW MODS →">VOIR LES MODS →</span>
                 </div>
             </a>
+
             <a href="discord-tools.html" style="text-decoration: none; color: inherit;">
                 <div class="card">
                     <h3 class="lang" data-fr="Discord Tools" data-en="Discord Tools">Discord Tools</h3>
@@ -61,6 +64,7 @@
                     <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES TOOLS →" data-en="VIEW TOOLS →">VOIR LES TOOLS →</span>
                 </div>
             </a>
+
         </div>
     </section>
 
@@ -75,10 +79,13 @@
             const elements = document.querySelectorAll('.lang');
             elements.forEach(el => {
                 const translation = el.getAttribute('data-' + lang);
-                if (translation) { el.innerHTML = translation; }
+                if (translation) {
+                    el.innerHTML = translation;
+                }
             });
             localStorage.setItem('selectedLang', lang);
         }
+
         window.onload = () => {
             const savedLang = localStorage.getItem('selectedLang') || 'fr';
             setLanguage(savedLang);

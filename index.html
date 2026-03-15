@@ -9,12 +9,15 @@
 <body>
     <header>
         <nav>
-            <div class="logo">SK COMMUNITY</div>
+            <div class="nav-left">
+                <button id="login-btn" onclick="openAuth()" class="auth-trigger">CONNEXION</button>
+                <div id="user-profile" style="display: none; color: #00ff88; font-size: 0.7rem; font-family: monospace;">
+                    ID: <span id="user-id-display"></span>
+                </div>
+            </div>
             
             <div class="nav-center">
-                <span style="color: #00ff88; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">
-                    ⚠️ Usage strictement éducatif et éthique / Educational & Ethical purposes only.
-                </span>
+                <div class="logo">SK COMMUNITY</div>
             </div>
 
             <ul>
@@ -41,7 +44,6 @@
     <section id="tools">
         <h2 style="text-align: center; color: #00ff88; margin-top: 50px;" class="lang" data-fr="NOS CATÉGORIES" data-en="OUR CATEGORIES">NOS CATÉGORIES</h2>
         <div class="grid">
-            
             <a href="rat.html" style="text-decoration: none; color: inherit;">
                 <div class="card">
                     <h3 class="lang" data-fr="RAT & Builders" data-en="RAT & Builders">RAT & Builders</h3>
@@ -49,7 +51,6 @@
                     <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES OUTILS →" data-en="VIEW TOOLS →">VOIR LES OUTILS →</span>
                 </div>
             </a>
-
             <a href="gta.html" style="text-decoration: none; color: inherit;">
                 <div class="card">
                     <h3 class="lang" data-fr="GTA V Mods" data-en="GTA V Mods">GTA V Mods</h3>
@@ -57,7 +58,6 @@
                     <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES MODS →" data-en="VIEW MODS →">VOIR LES MODS →</span>
                 </div>
             </a>
-
             <a href="discord-tools.html" style="text-decoration: none; color: inherit;">
                 <div class="card">
                     <h3 class="lang" data-fr="Discord Tools" data-en="Discord Tools">Discord Tools</h3>
@@ -65,15 +65,27 @@
                     <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES TOOLS →" data-en="VIEW TOOLS →">VOIR LES TOOLS →</span>
                 </div>
             </a>
-
         </div>
     </section>
+
+    <div id="authModal" class="help-overlay">
+        <div class="help-content card translucent" style="max-width: 350px;">
+            <span class="close-help" onclick="closeAuth()">&times;</span>
+            <h2 style="color: #00ff88; margin-bottom: 20px;">ACCOUNT</h2>
+            <button onclick="handleLogin('Google')" class="social-btn google-btn">Connect with Google</button>
+            <button onclick="handleLogin('Discord')" class="social-btn discord-btn">Connect with Discord</button>
+            <div style="margin: 15px 0; color: #444; font-size: 0.7rem;">OR</div>
+            <input type="email" id="email" placeholder="Email" class="auth-field">
+            <input type="password" id="pass" placeholder="Password" class="auth-field">
+            <button onclick="handleLogin('Email')" class="btn-primary" style="width: 100%; margin-top: 10px;">VALIDER</button>
+        </div>
+    </div>
 
     <div id="helpModal" class="help-overlay">
         <div class="help-content card translucent">
             <span class="close-help" onclick="closeHelp()">&times;</span>
             <h2 style="color: #00ff88;">HELP</h2>
-            <p id="help-text" class="lang" style="margin: 20px 0; line-height: 1.6; font-size: 0.95rem;" 
+            <p class="lang" style="margin: 20px 0; line-height: 1.6; font-size: 0.95rem;" 
                data-fr="Si vous avez besoin d'aide ou un problème, ouvrez un ticket sur le discord :" 
                data-en="If you need help or have an issue, open a ticket on discord:">
                Si vous avez besoin d'aide ou un problème, ouvrez un ticket sur le discord :
@@ -100,6 +112,18 @@
 
         function openHelp() { document.getElementById('helpModal').style.display = 'flex'; }
         function closeHelp() { document.getElementById('helpModal').style.display = 'none'; }
+        function openAuth() { document.getElementById('authModal').style.display = 'flex'; }
+        function closeAuth() { document.getElementById('authModal').style.display = 'none'; }
+
+        function handleLogin(provider) {
+            const fakeUID = "1wktmp" + Math.random().toString(36).substr(2, 9);
+            document.cookie = `sk_session=${fakeUID}; max-age=2592000; path=/`;
+            document.getElementById('login-btn').style.display = 'none';
+            document.getElementById('user-profile').style.display = 'block';
+            document.getElementById('user-id-display').innerText = fakeUID;
+            closeAuth();
+            alert("Connecté via " + provider + " | ID: " + fakeUID);
+        }
 
         window.onload = () => {
             const savedLang = localStorage.getItem('selectedLang') || 'fr';

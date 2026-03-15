@@ -1,4 +1,4 @@
-/* Base */
+/* BASE & RESET */
 body { 
     background: #0a0a0a; 
     color: #fff; 
@@ -6,19 +6,20 @@ body {
     margin: 0; 
     scroll-behavior: smooth; 
     overflow-x: hidden;
+    top: 0 !important; /* Pour Google Translate */
 }
 
-/* Navigation */
+/* NAVIGATION */
 nav { 
     display: flex; 
     justify-content: space-between; 
     align-items: center;
-    padding: 20px 30px;
+    padding: 15px 40px;
     background: rgba(0,0,0,0.95); 
     position: fixed; 
     width: 100%; 
     top: 0; 
-    z-index: 100; 
+    z-index: 1000; 
     box-sizing: border-box;
     border-bottom: 1px solid #111;
 }
@@ -31,7 +32,7 @@ nav {
     letter-spacing: 1px;
 }
 
-/* Bouton Discord Central */
+/* CENTRE */
 .nav-center {
     position: absolute;
     left: 50%;
@@ -39,43 +40,104 @@ nav {
 }
 
 .discord-nav-btn {
-    background: transparent;
     border: 1px solid #00ff88;
     color: #00ff88;
-    padding: 8px 20px;
+    padding: 8px 15px;
     border-radius: 5px;
     text-decoration: none;
     font-size: 12px;
     font-weight: bold;
     transition: 0.3s;
-    letter-spacing: 1px;
     text-transform: uppercase;
 }
 
 .discord-nav-btn:hover {
     background: #00ff88;
     color: #000 !important;
-    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
 }
 
-nav ul { 
-    display: flex; 
-    list-style: none; 
-    gap: 25px; 
-    margin: 0; 
+/* DROITE (Liens + Settings + Langues) */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+    margin: 0;
     padding: 0;
 }
 
-nav ul li a { 
+.nav-links li a { 
     color: #fff; 
     text-decoration: none; 
+    font-size: 0.9rem;
     font-weight: 500;
     transition: 0.3s; 
 }
 
-nav ul li a:hover { color: #00ff88; }
+.nav-links li a:hover { color: #00ff88; }
 
-/* Hero Section */
+/* ROULETTE PARAMÈTRES */
+.settings-menu {
+    position: relative;
+    cursor: pointer;
+}
+
+.settings-icon {
+    color: #00ff88;
+    font-size: 1.3rem;
+    transition: 0.5s ease;
+}
+
+.settings-menu:hover .settings-icon {
+    transform: rotate(90deg);
+}
+
+.settings-dropdown {
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background: #111;
+    border: 1px solid #00ff88;
+    padding: 15px;
+    width: 180px;
+    border-radius: 8px;
+    display: none;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+}
+
+.settings-menu:hover .settings-dropdown {
+    display: block;
+}
+
+.settings-dropdown h4 { margin: 0 0 10px 0; color: #00ff88; font-size: 0.9rem; text-transform: uppercase; }
+.settings-dropdown p { font-size: 0.8rem; margin: 8px 0; color: #ccc; display: flex; align-items: center; gap: 8px; }
+.settings-dropdown i { color: #00ff88; width: 15px; }
+
+/* GOOGLE TRANSLATE */
+#google_translate_element {
+    background: transparent;
+}
+
+.goog-te-gadget-simple {
+    background-color: transparent !important;
+    border: 1px solid #333 !important;
+    padding: 5px !important;
+    border-radius: 4px !important;
+}
+
+.goog-te-gadget-simple span {
+    color: #00ff88 !important;
+}
+
+.goog-te-banner-frame.skiptranslate { display: none !important; }
+
+/* HERO & GRIDS */
 .hero { 
     height: 100vh; 
     display: flex; 
@@ -84,30 +146,21 @@ nav ul li a:hover { color: #00ff88; }
     align-items: center; 
     background: radial-gradient(circle, #1a1a1a 0%, #000 100%); 
     text-align: center; 
-    padding: 0 20px;
 }
 
-h1 { font-size: clamp(2rem, 8vw, 3.5rem); color: #00ff88; margin-bottom: 15px; text-shadow: 0 0 30px rgba(0, 255, 136, 0.2); }
-
-/* Boutons */
 .btn-primary { 
-    display: inline-block;
     background: #00ff88; 
     color: #000 !important;
     padding: 15px 35px; 
     border-radius: 8px; 
     font-weight: bold; 
     text-decoration: none;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: 0.3s;
 }
 
-.btn-primary:hover { 
-    transform: scale(1.05); 
-    box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
-}
+.btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(0, 255, 136, 0.5); }
 
 .btn-secondary {
-    display: inline-block;
     margin-left: 15px;
     padding: 15px 35px;
     border: 1px solid #00ff88;
@@ -117,14 +170,11 @@ h1 { font-size: clamp(2rem, 8vw, 3.5rem); color: #00ff88; margin-bottom: 15px; t
     transition: 0.3s;
 }
 
-.btn-secondary:hover { background: rgba(0, 255, 136, 0.1); }
-
-/* Grille & Cartes */
 .grid { 
     display: grid; 
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
     gap: 25px; 
-    padding: 80px 50px; 
+    padding: 50px; 
 }
 
 .card { 
@@ -135,4 +185,4 @@ h1 { font-size: clamp(2rem, 8vw, 3.5rem); color: #00ff88; margin-bottom: 15px; t
     transition: 0.3s; 
 }
 
-.card:hover { border-color: #00ff88; background: #161616; transform: translateY(-5px); }
+.card:hover { border-color: #00ff88; transform: translateY(-5px); }

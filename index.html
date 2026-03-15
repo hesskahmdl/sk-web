@@ -20,7 +20,7 @@
             <ul>
                 <li><a href="#home" class="lang" data-fr="Accueil" data-en="Home">Accueil</a></li>
                 <li><a href="#tools" class="lang" data-fr="Tools" data-en="Tools">Tools</a></li>
-                <li><a href="#" onclick="openHelp()" class="lang" style="color: #00ff88;" data-fr="Help" data-en="Help">Help</a></li>
+                <li><a href="#" onclick="openHelp()" class="lang" data-fr="Help" data-en="Help">Help</a></li>
                 <li class="nav-langs">
                     <img src="https://flagcdn.com/w20/fr.png" onclick="setLanguage('fr')" style="cursor:pointer; opacity:0.8;" alt="FR">
                     <img src="https://flagcdn.com/w20/us.png" onclick="setLanguage('en')" style="cursor:pointer; opacity:0.8;" alt="EN">
@@ -41,6 +41,7 @@
     <section id="tools">
         <h2 style="text-align: center; color: #00ff88; margin-top: 50px;" class="lang" data-fr="NOS CATÉGORIES" data-en="OUR CATEGORIES">NOS CATÉGORIES</h2>
         <div class="grid">
+            
             <a href="rat.html" style="text-decoration: none; color: inherit;">
                 <div class="card">
                     <h3 class="lang" data-fr="RAT & Builders" data-en="RAT & Builders">RAT & Builders</h3>
@@ -48,6 +49,7 @@
                     <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES OUTILS →" data-en="VIEW TOOLS →">VOIR LES OUTILS →</span>
                 </div>
             </a>
+
             <a href="gta.html" style="text-decoration: none; color: inherit;">
                 <div class="card">
                     <h3 class="lang" data-fr="GTA V Mods" data-en="GTA V Mods">GTA V Mods</h3>
@@ -55,6 +57,7 @@
                     <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES MODS →" data-en="VIEW MODS →">VOIR LES MODS →</span>
                 </div>
             </a>
+
             <a href="discord-tools.html" style="text-decoration: none; color: inherit;">
                 <div class="card">
                     <h3 class="lang" data-fr="Discord Tools" data-en="Discord Tools">Discord Tools</h3>
@@ -62,17 +65,18 @@
                     <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES TOOLS →" data-en="VIEW TOOLS →">VOIR LES TOOLS →</span>
                 </div>
             </a>
+
         </div>
     </section>
 
     <div id="helpModal" class="help-overlay">
-        <div class="help-content card">
+        <div class="help-content card translucent">
             <span class="close-help" onclick="closeHelp()">&times;</span>
-            <h2 style="color: #00ff88;">BESOIN D'AIDE ?</h2>
-            <p style="margin: 20px 0; line-height: 1.6;">
+            <h2 style="color: #00ff88;">HELP</h2>
+            <p style="margin: 20px 0; line-height: 1.6; font-size: 0.95rem;">
                 Si vous avez besoin d'aide ou un problème, ouvrez un ticket sur le discord :
             </p>
-            <a href="https://discord.gg/JKaUWpNd" class="btn-primary" style="display: block; text-decoration: none;">OUVRIR UN TICKET</a>
+            <a href="https://discord.gg/JKaUWpNd" class="btn-primary" style="display: inline-block; text-decoration: none;">REJOINDRE LE SUPPORT</a>
         </div>
     </div>
 
@@ -92,7 +96,6 @@
             localStorage.setItem('selectedLang', lang);
         }
 
-        // Fonctions pour l'aide
         function openHelp() { document.getElementById('helpModal').style.display = 'flex'; }
         function closeHelp() { document.getElementById('helpModal').style.display = 'none'; }
 

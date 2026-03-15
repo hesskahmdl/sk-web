@@ -1,17 +1,21 @@
+/* Base */
 body { 
-    background: #050505; 
+    background: #0a0a0a; 
     color: #fff; 
-    font-family: 'Inter', sans-serif; 
+    font-family: 'Segoe UI', sans-serif; 
     margin: 0; 
+    scroll-behavior: smooth; 
     overflow-x: hidden;
+    top: 0 !important;
 }
 
+/* Navigation */
 nav { 
     display: flex; 
     justify-content: space-between; 
     align-items: center;
-    padding: 20px 40px;
-    background: #000; 
+    padding: 20px 30px;
+    background: rgba(0,0,0,0.95); 
     position: fixed; 
     width: 100%; 
     top: 0; 
@@ -20,7 +24,7 @@ nav {
     border-bottom: 1px solid #111;
 }
 
-.logo { color: #00ff88; font-weight: 900; letter-spacing: 2px; }
+.logo { color: #00ff88; font-weight: bold; font-size: 1.4rem; text-transform: uppercase; }
 
 .nav-center {
     position: absolute;
@@ -31,41 +35,49 @@ nav {
 .discord-nav-btn {
     border: 1px solid #00ff88;
     color: #00ff88;
-    padding: 6px 15px;
-    font-size: 11px;
+    padding: 8px 15px;
+    border-radius: 5px;
     text-decoration: none;
+    font-size: 11px;
     font-weight: bold;
 }
 
 .nav-right { display: flex; align-items: center; gap: 20px; }
 
-.nav-links { display: flex; list-style: none; gap: 20px; padding: 0; margin: 0; }
-.nav-links a { color: #888; text-decoration: none; font-size: 11px; font-weight: bold; transition: 0.3s; }
+.nav-links { display: flex; list-style: none; gap: 15px; margin: 0; padding: 0; }
+.nav-links a { color: #fff; text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
 .nav-links a:hover { color: #00ff88; }
 
-/* Drapeaux */
-.lang-selector { display: flex; gap: 8px; border-left: 1px solid #222; padding-left: 15px; }
-.lang-selector img { cursor: pointer; opacity: 0.6; transition: 0.3s; width: 18px; }
-.lang-selector img:hover { opacity: 1; transform: scale(1.1); }
+/* Roulette */
+.settings-menu { position: relative; cursor: pointer; }
+.settings-icon { color: #00ff88; font-size: 1.2rem; transition: 0.5s; }
+.settings-menu:hover .settings-icon { transform: rotate(90deg); }
+.settings-dropdown {
+    position: absolute;
+    right: 0; top: 40px;
+    background: #111; border: 1px solid #00ff88;
+    padding: 15px; width: 160px; border-radius: 8px;
+    display: none; box-shadow: 0 0 20px #000;
+}
+.settings-menu:hover .settings-dropdown { display: block; }
+.settings-dropdown h4 { margin: 0; color: #00ff88; font-size: 0.8rem; }
+.settings-dropdown p { font-size: 0.7rem; margin: 10px 0; color: #ccc; }
 
-/* Statut Online */
-.status-indicator { display: flex; align-items: center; gap: 8px; background: #111; padding: 5px 10px; border-radius: 4px; }
-.status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px #00ff88; }
-.status-text { font-size: 9px; color: #00ff88; font-weight: bold; }
+/* Drapeaux */
+.lang-selector { display: flex; gap: 10px; margin-left: 10px; }
+.lang-selector img { width: 20px; cursor: pointer; transition: 0.3s; opacity: 0.7; }
+.lang-selector img:hover { opacity: 1; transform: scale(1.2); }
+
+/* Cache Google moche */
+.goog-te-banner-frame.skiptranslate, .goog-te-gadget-icon { display: none !important; }
 
 /* Hero */
-.hero { height: 100vh; display: flex; align-items: center; justify-content: center; background: #000; }
-h1 { font-size: 4rem; margin: 0; letter-spacing: -2px; color: #fff; }
-p { color: #666; letter-spacing: 3px; font-size: 12px; }
+.hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); }
+h1 { font-size: 3rem; color: #00ff88; margin-bottom: 20px; }
+.btn-primary { background: #00ff88; color: #000; padding: 15px 30px; text-decoration: none; font-weight: bold; border-radius: 8px; }
+.btn-secondary { border: 1px solid #00ff88; color: #00ff88; padding: 15px 30px; text-decoration: none; margin-left: 10px; border-radius: 8px; }
 
-/* Buttons */
-.btn-primary { background: #00ff88; color: #000; padding: 12px 30px; text-decoration: none; font-weight: bold; margin-right: 10px; }
-.btn-secondary { border: 1px solid #333; color: #fff; padding: 12px 30px; text-decoration: none; font-weight: bold; }
-
-/* Cards */
-.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 100px 40px; }
-.card { background: #080808; border: 1px solid #111; padding: 40px; transition: 0.3s; }
-.card:hover { border-color: #00ff88; background: #0c0c0c; }
-.card h3 { color: #00ff88; margin-bottom: 10px; font-size: 1rem; }
-.card p { color: #444; margin: 0; }
-.card-link { text-decoration: none; }
+/* Grille */
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 50px; }
+.card { background: #111; padding: 30px; border: 1px solid #222; border-radius: 12px; transition: 0.3s; }
+.card:hover { border-color: #00ff88; transform: translateY(-5px); }

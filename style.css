@@ -5,21 +5,21 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     margin: 0; 
     scroll-behavior: smooth; 
-    overflow-x: hidden; /* Empêche le défilement horizontal bizarre */
+    overflow-x: hidden;
 }
 
-/* Navigation Corrigée */
+/* Navigation */
 nav { 
     display: flex; 
     justify-content: space-between; 
     align-items: center;
-    padding: 20px 30px; /* Réduit un peu pour laisser de la place */
+    padding: 20px 30px; 
     background: rgba(0,0,0,0.9); 
     position: fixed; 
     width: 100%; 
     top: 0; 
     z-index: 100; 
-    box-sizing: border-box; /* IMPORTANT : pour que le menu reste DANS l'écran */
+    box-sizing: border-box;
 }
 
 .logo { 
@@ -30,14 +30,38 @@ nav {
     letter-spacing: 1px;
 }
 
+/* --- LE BOUTON DISCORD VERT --- */
+.nav-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.discord-btn-nav {
+    border: 1px solid #00ff88;
+    color: #00ff88;
+    padding: 8px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.discord-btn-nav:hover {
+    background: #00ff88;
+    color: #000 !important;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+}
+
 nav ul { 
     display: flex; 
-    align-items: center; /* Aligne les drapeaux verticalement avec les liens */
+    align-items: center;
     list-style: none; 
     gap: 25px; 
     margin: 0; 
     padding: 0; 
-    padding-right: 20px; /* Décale le menu vers la gauche pour qu'on voie tout */
+    padding-right: 20px;
 }
 
 nav ul li a { 
@@ -49,6 +73,20 @@ nav ul li a {
 
 nav ul li a:hover { 
     color: #00ff88; 
+}
+
+/* --- DRAPEAUX --- */
+.nav-langs {
+    display: flex;
+    gap: 10px;
+    margin-left: 10px;
+    border-left: 1px solid #333;
+    padding-left: 15px;
+}
+
+.nav-langs img:hover {
+    transform: scale(1.2);
+    opacity: 1 !important;
 }
 
 /* Hero Section */
@@ -64,7 +102,7 @@ nav ul li a:hover {
 }
 
 h1 { 
-    font-size: clamp(2rem, 8vw, 3.5rem); /* S'adapte à la taille de l'écran */
+    font-size: clamp(2rem, 8vw, 3.5rem); 
     margin-bottom: 15px; 
     color: #00ff88; 
     text-shadow: 0 0 20px rgba(0, 255, 136, 0.3); 
@@ -74,18 +112,17 @@ h1 {
 .btn-primary { 
     display: inline-block;
     background: #00ff88; 
-    color: #000 !important; /* Force le texte à rester noir */
+    color: #000 !important; 
     padding: 15px 35px; 
     border-radius: 8px; 
     font-weight: bold; 
     text-decoration: none;
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transition fluide */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .btn-primary:hover { 
-    transform: scale(1.05); /* S'agrandit légèrement (5%) */
-    box-shadow: 0 0 25px rgba(0, 255, 136, 0.5); /* Effet néon */
-    color: #000 !important; /* Sécurité : le texte RESTE noir au survol */
+    transform: scale(1.05); 
+    box-shadow: 0 0 25px rgba(0, 255, 136, 0.5); 
 }
 
 .btn-secondary {
@@ -122,26 +159,4 @@ h1 {
 .card:hover { 
     border-color: #00ff88; 
     background: #161616;
-}
-
-/* --- AJOUT POUR LE SYSTÈME DE TRADUCTION --- */
-
-.nav-langs {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-left: 1px solid #333; /* Petite séparation visuelle */
-    padding-left: 15px;
-}
-
-.nav-langs img {
-    width: 20px;
-    height: auto;
-    transition: 0.3s;
-    opacity: 0.7;
-}
-
-.nav-langs img:hover {
-    opacity: 1;
-    transform: scale(1.2);
 }

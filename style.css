@@ -1,12 +1,124 @@
-body { background: #0a0a0a; color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; scroll-behavior: smooth; }
-nav { display: flex; justify-content: space-between; padding: 20px 50px; background: rgba(0,0,0,0.8); position: fixed; width: 100%; top: 0; z-index: 100; }
-.logo { font-weight: bold; color: #00ff88; font-size: 1.5rem; }
-ul { display: flex; list-style: none; gap: 20px; }
-a { color: #fff; text-decoration: none; transition: 0.3s; }
-a:hover { color: #00ff88; }
-.hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle, #1a1a1a 0%, #000 100%); text-align: center; }
-h1 { font-size: 3.5rem; margin-bottom: 10px; color: #00ff88; text-shadow: 0 0 15px #00ff8855; }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 50px; }
-.card { background: #111; padding: 30px; border: 1px solid #333; border-radius: 10px; transition: 0.3s; }
-.card:hover { border-color: #00ff88; transform: translateY(-5px); }
-.btn-primary { background: #00ff88; color: #000; padding: 15px 30px; border-radius: 5px; font-weight: bold; }
+/* Base */
+body { 
+    background: #0a0a0a; 
+    color: #fff; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    margin: 0; 
+    scroll-behavior: smooth; 
+    overflow-x: hidden; /* Empêche le défilement horizontal bizarre */
+}
+
+/* Navigation Corrigée */
+nav { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    padding: 20px 30px; /* Réduit un peu pour laisser de la place */
+    background: rgba(0,0,0,0.9); 
+    position: fixed; 
+    width: 100%; 
+    top: 0; 
+    z-index: 100; 
+    box-sizing: border-box; /* IMPORTANT : pour que le menu reste DANS l'écran */
+}
+
+.logo { 
+    font-weight: bold; 
+    color: #00ff88; 
+    font-size: 1.4rem; 
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+nav ul { 
+    display: flex; 
+    list-style: none; 
+    gap: 25px; 
+    margin: 0; 
+    padding: 0; 
+    padding-right: 20px; /* Décale le menu vers la gauche pour qu'on voie tout */
+}
+
+nav ul li a { 
+    color: #fff; 
+    text-decoration: none; 
+    font-weight: 500;
+    transition: 0.3s; 
+}
+
+nav ul li a:hover { 
+    color: #00ff88; 
+}
+
+/* Hero Section */
+.hero { 
+    height: 100vh; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    background: radial-gradient(circle, #1a1a1a 0%, #000 100%); 
+    text-align: center; 
+    padding: 0 20px;
+}
+
+h1 { 
+    font-size: clamp(2rem, 8vw, 3.5rem); /* S'adapte à la taille de l'écran */
+    margin-bottom: 15px; 
+    color: #00ff88; 
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.3); 
+}
+
+/* Bouton Corrigé */
+.btn-primary { 
+    display: inline-block;
+    background: #00ff88; 
+    color: #000 !important; /* Force le texte à rester noir */
+    padding: 15px 35px; 
+    border-radius: 8px; 
+    font-weight: bold; 
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transition fluide */
+}
+
+.btn-primary:hover { 
+    transform: scale(1.05); /* S'agrandit légèrement (5%) */
+    box-shadow: 0 0 25px rgba(0, 255, 136, 0.5); /* Effet néon */
+    color: #000 !important; /* Sécurité : le texte RESTE noir au survol */
+}
+
+.btn-secondary {
+    display: inline-block;
+    margin-left: 15px;
+    padding: 15px 35px;
+    border: 1px solid #00ff88;
+    color: #00ff88;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-secondary:hover {
+    background: rgba(0, 255, 136, 0.1);
+}
+
+/* Grille de contenu */
+.grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    gap: 25px; 
+    padding: 80px 50px; 
+}
+
+.card { 
+    background: #111; 
+    padding: 30px; 
+    border: 1px solid #222; 
+    border-radius: 12px; 
+    transition: 0.3s; 
+}
+
+.card:hover { 
+    border-color: #00ff88; 
+    background: #161616;
+}

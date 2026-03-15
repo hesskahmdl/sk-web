@@ -101,16 +101,6 @@
                 selectField.dispatchEvent(new Event('change'));
             }
         }
-
-        // Nettoyeur automatique pour supprimer la barre Google
-        setInterval(function() {
-            var googleBar = document.querySelector(".goog-te-banner-frame");
-            if (googleBar) {
-                googleBar.style.display = 'none';
-                googleBar.style.visibility = 'hidden';
-            }
-            document.body.style.top = "0px";
-        }, 500);
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 

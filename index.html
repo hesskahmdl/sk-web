@@ -5,12 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SK COMMUNITY | Tech & Modding</title>
     <link rel="stylesheet" href="style.css">
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, DiscordAuthProvider, createUserWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // REMPLACE AVEC TES CLÉS FIREBASE CONSOLE
+        const firebaseConfig = {
+            apiKey: "TON_API_KEY",
+            authDomain: "TON_PROJET.firebaseapp.com",
+            projectId: "TON_PROJET_ID",
+            storageBucket: "TON_PROJET.appspot.com",
+            messagingSenderId: "ID",
+            appId: "TON_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Rester connecté après Reload
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('login-btn').style.display = 'none';
+                document.getElementById('user-profile').style.display = 'block';
+                document.getElementById('user-id-display').innerText = user.uid.substring(0, 10);
+            } else {
+                document.getElementById('login-btn').style.display = 'block';
+                document.getElementById('user-profile').style.display = 'none';
+            }
+        });
+
+        // Connexion Google
+        window.loginGoogle = async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                const res = await signInWithPopup(auth, provider);
+                saveUser(res.user);
+                closeAuth();
+            } catch (e) { alert(e.message); }
+        };
+
+        // Inscription Email + Verif
+        window.signUpEmail = async () => {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('pass').value;
+            try {
+                const res = await createUserWithEmailAndPassword(auth, email, pass);
+                await sendEmailVerification(res.user);
+                saveUser(res.user);
+                alert("Email de confirmation envoyé ! / Verification email sent !");
+                closeAuth();
+            } catch (e) { alert(e.message); }
+        };
+
+        async function saveUser(user) {
+            await setDoc(doc(db, "users", user.uid), {
+                uid: user.uid,
+                email: user.email,
+                lastLogin: new Date(),
+                purchases: [] // Tu verras ça dans ton dashboard Firestore
+            }, { merge: true });
+        }
+    </script>
 </head>
 <body>
     <header>
         <nav>
             <div class="nav-left">
-                <button id="login-btn" onclick="openAuth()" class="auth-trigger">CONNEXION</button>
+                <button id="login-btn" onclick="openAuth()" class="auth-trigger lang" data-fr="CONNEXION" data-en="LOGIN">CONNEXION</button>
                 <div id="user-profile" style="display: none; color: #00ff88; font-size: 0.7rem; font-family: monospace;">
                     ID: <span id="user-id-display"></span>
                 </div>
@@ -44,40 +107,26 @@
     <section id="tools">
         <h2 style="text-align: center; color: #00ff88; margin-top: 50px;" class="lang" data-fr="NOS CATÉGORIES" data-en="OUR CATEGORIES">NOS CATÉGORIES</h2>
         <div class="grid">
-            <a href="rat.html" style="text-decoration: none; color: inherit;">
+            <a href="rat.html" class="card-link">
                 <div class="card">
                     <h3 class="lang" data-fr="RAT & Builders" data-en="RAT & Builders">RAT & Builders</h3>
                     <p class="lang" data-fr="Configuration et support pour Quasar et plus." data-en="Configuration and support for Quasar and more.">Configuration et support pour Quasar et plus.</p>
-                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES OUTILS →" data-en="VIEW TOOLS →">VOIR LES OUTILS →</span>
+                    <span class="view-tools lang" data-fr="VOIR LES OUTILS →" data-en="VIEW TOOLS →">VOIR LES OUTILS →</span>
                 </div>
             </a>
-            <a href="gta.html" style="text-decoration: none; color: inherit;">
-                <div class="card">
-                    <h3 class="lang" data-fr="GTA V Mods" data-en="GTA V Mods">GTA V Mods</h3>
-                    <p class="lang" data-fr="Menus et scripts pour dominer Los Santos." data-en="Menus and scripts to dominate Los Santos.">Menus et scripts pour dominer Los Santos.</p>
-                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES MODS →" data-en="VIEW MODS →">VOIR LES MODS →</span>
-                </div>
-            </a>
-            <a href="discord-tools.html" style="text-decoration: none; color: inherit;">
-                <div class="card">
-                    <h3 class="lang" data-fr="Discord Tools" data-en="Discord Tools">Discord Tools</h3>
-                    <p class="lang" data-fr="Token management, nukers et sécurité." data-en="Token management, nukers and security.">Token management, nukers et sécurité.</p>
-                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES TOOLS →" data-en="VIEW TOOLS →">VOIR LES TOOLS →</span>
-                </div>
-            </a>
-        </div>
+            </div>
     </section>
 
     <div id="authModal" class="help-overlay">
         <div class="help-content card translucent" style="max-width: 350px;">
             <span class="close-help" onclick="closeAuth()">&times;</span>
-            <h2 style="color: #00ff88; margin-bottom: 20px;">ACCOUNT</h2>
-            <button onclick="handleLogin('Google')" class="social-btn google-btn">Connect with Google</button>
-            <button onclick="handleLogin('Discord')" class="social-btn discord-btn">Connect with Discord</button>
-            <div style="margin: 15px 0; color: #444; font-size: 0.7rem;">OR</div>
+            <h2 style="color: #00ff88; margin-bottom: 20px;" class="lang" data-fr="COMPTE" data-en="ACCOUNT">COMPTE</h2>
+            <button onclick="loginGoogle()" class="social-btn google-btn">Google</button>
+            <button onclick="loginDiscord()" class="social-btn discord-btn">Discord</button>
+            <div style="margin: 15px 0; color: #444; font-size: 0.7rem;" class="lang" data-fr="OU" data-en="OR">OU</div>
             <input type="email" id="email" placeholder="Email" class="auth-field">
             <input type="password" id="pass" placeholder="Password" class="auth-field">
-            <button onclick="handleLogin('Email')" class="btn-primary" style="width: 100%; margin-top: 10px;">VALIDER</button>
+            <button onclick="signUpEmail()" class="btn-primary lang" style="width: 100%; margin-top: 10px;" data-fr="VALIDER" data-en="VALIDATE">VALIDER</button>
         </div>
     </div>
 
@@ -94,12 +143,6 @@
         </div>
     </div>
 
-    <footer>
-        <p style="text-align: center; padding: 40px; color: #444; font-size: 0.9rem;" class="lang" data-fr="&copy; 2026 SK COMMUNITY - Tous droits réservés." data-en="&copy; 2026 SK COMMUNITY - All rights reserved.">
-            &copy; 2026 SK COMMUNITY - Tous droits réservés.
-        </p>
-    </footer>
-
     <script>
         function setLanguage(lang) {
             const elements = document.querySelectorAll('.lang');
@@ -109,26 +152,11 @@
             });
             localStorage.setItem('selectedLang', lang);
         }
-
         function openHelp() { document.getElementById('helpModal').style.display = 'flex'; }
         function closeHelp() { document.getElementById('helpModal').style.display = 'none'; }
         function openAuth() { document.getElementById('authModal').style.display = 'flex'; }
         function closeAuth() { document.getElementById('authModal').style.display = 'none'; }
-
-        function handleLogin(provider) {
-            const fakeUID = "1wktmp" + Math.random().toString(36).substr(2, 9);
-            document.cookie = `sk_session=${fakeUID}; max-age=2592000; path=/`;
-            document.getElementById('login-btn').style.display = 'none';
-            document.getElementById('user-profile').style.display = 'block';
-            document.getElementById('user-id-display').innerText = fakeUID;
-            closeAuth();
-            alert("Connecté via " + provider + " | ID: " + fakeUID);
-        }
-
-        window.onload = () => {
-            const savedLang = localStorage.getItem('selectedLang') || 'fr';
-            setLanguage(savedLang);
-        };
+        window.onload = () => { setLanguage(localStorage.getItem('selectedLang') || 'fr'); };
     </script>
 </body>
 </html>

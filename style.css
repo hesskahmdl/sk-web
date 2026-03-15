@@ -1,4 +1,6 @@
-/* Base */
+/* =========================================
+   BASE & RESET
+   ========================================= */
 body { 
     background: #0a0a0a; 
     color: #fff; 
@@ -8,7 +10,9 @@ body {
     overflow-x: hidden;
 }
 
-/* Navigation */
+/* =========================================
+   NAVIGATION (HEADER)
+   ========================================= */
 nav { 
     display: flex; 
     justify-content: space-between; 
@@ -20,27 +24,23 @@ nav {
     top: 0; 
     z-index: 100; 
     box-sizing: border-box;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* Structure en 3 colonnes pour le centrage */
 .nav-left {
     flex: 1;
     display: flex;
     justify-content: flex-start;
+    align-items: center;
+    gap: 15px;
 }
 
 .nav-center {
     flex: 1;
     display: flex;
     justify-content: center;
-}
-
-.logo { 
-    font-weight: bold; 
-    color: #00ff88; 
-    font-size: 1.4rem; 
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    white-space: nowrap;
+    align-items: center;
 }
 
 nav ul { 
@@ -54,72 +54,116 @@ nav ul {
     padding: 0; 
 }
 
+/* Éléments de Nav */
+.logo { 
+    font-weight: bold; 
+    color: #00ff88; 
+    font-size: 1.4rem; 
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+    white-space: nowrap;
+}
+
 nav ul li a { 
     color: #fff; 
     text-decoration: none; 
     font-weight: 500;
+    font-size: 0.9rem;
     transition: 0.3s; 
 }
 
-nav ul li a:hover { color: #00ff88; }
+nav ul li a:hover { 
+    color: #00ff88; 
+}
 
-/* AUTH BUTTONS */
+/* =========================================
+   AUTHENTIFICATION (BOUTONS & PROFIL)
+   ========================================= */
 .auth-trigger {
     background: transparent;
     border: 1px solid #00ff88;
     color: #00ff88;
-    padding: 6px 15px;
+    padding: 7px 18px;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: bold;
+    text-transform: uppercase;
     transition: 0.3s;
 }
-.auth-trigger:hover { background: rgba(0, 255, 136, 0.1); }
 
-.auth-field {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid #333;
-    color: #fff;
-    border-radius: 5px;
+.auth-trigger:hover { 
+    background: rgba(0, 255, 136, 0.1); 
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+}
+
+.auth-field { 
+    width: 100%; 
+    padding: 12px; 
+    margin-bottom: 15px; 
+    background: rgba(255,255,255,0.05); 
+    border: 1px solid #333; 
+    color: #fff; 
+    border-radius: 6px; 
     box-sizing: border-box;
+    outline: none;
 }
 
-.social-btn {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    color: white;
+.auth-field:focus {
+    border-color: #00ff88;
 }
+
+.social-btn { 
+    width: 100%; 
+    padding: 12px; 
+    margin-bottom: 10px; 
+    border: none; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    color: white; 
+    font-size: 0.9rem;
+    transition: 0.3s;
+}
+
 .google-btn { background: #df4b3b; }
-.discord-btn { background: #5865f2; }
+.google-btn:hover { background: #c53929; }
 
-/* Hero Section */
+.discord-btn { background: #5865f2; }
+.discord-btn:hover { background: #4752c4; }
+
+/* =========================================
+   HERO SECTION
+   ========================================= */
 .hero { 
     height: 100vh; 
     display: flex; 
     flex-direction: column; 
     justify-content: center; 
     align-items: center; 
-    background: radial-gradient(circle, #1a1a1a 0%, #000 100%); 
+    background: radial-gradient(circle at center, #111 0%, #000 100%); 
     text-align: center; 
     padding: 0 20px;
 }
 
-h1 { 
+.hero h1 { 
     font-size: clamp(2rem, 8vw, 3.5rem); 
-    margin-bottom: 15px; 
+    margin-bottom: 20px; 
     color: #00ff88; 
-    text-shadow: 0 0 20px rgba(0, 255, 136, 0.3); 
+    text-shadow: 0 0 25px rgba(0, 255, 136, 0.4); 
 }
 
+.hero p {
+    color: #888;
+    max-width: 600px;
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+}
+
+/* =========================================
+   BOUTONS GÉNÉRAUX
+   ========================================= */
 .btn-primary { 
     display: inline-block;
     background: #00ff88; 
@@ -127,9 +171,15 @@ h1 {
     padding: 15px 35px; 
     border-radius: 8px; 
     font-weight: bold; 
-    text-decoration: none;
+    text-decoration: none; 
+    border: none; 
     cursor: pointer;
-    border: none;
+    transition: 0.3s ease;
+}
+
+.btn-primary:hover { 
+    transform: translateY(-3px); 
+    box-shadow: 0 10px 20px rgba(0, 255, 136, 0.3); 
 }
 
 .btn-secondary {
@@ -140,49 +190,129 @@ h1 {
     color: #00ff88;
     border-radius: 8px;
     text-decoration: none;
+    transition: 0.3s;
 }
 
-/* Content Grid */
+.btn-secondary:hover {
+    background: rgba(0, 255, 136, 0.1);
+}
+
+/* =========================================
+   GRILLE & CARTES (TOOLS)
+   ========================================= */
 .grid { 
     display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-    gap: 25px; 
-    padding: 80px 50px; 
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    gap: 30px; 
+    padding: 100px 50px; 
+}
+
+.card-link {
+    text-decoration: none;
+    color: inherit;
 }
 
 .card { 
     background: #111; 
-    padding: 30px; 
+    padding: 40px; 
     border: 1px solid #222; 
-    border-radius: 12px; 
+    border-radius: 16px; 
+    transition: 0.4s ease; 
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover { 
+    border-color: #00ff88; 
+    background: #161616;
+    transform: translateY(-10px);
+}
+
+.card h3 {
+    margin-top: 0;
+    color: #00ff88;
+    font-size: 1.5rem;
+}
+
+.card p {
+    color: #aaa;
+    line-height: 1.6;
+}
+
+.view-tools {
+    display: block;
+    margin-top: 20px;
+    font-weight: bold;
+    color: #00ff88;
+    font-size: 0.85rem;
+}
+
+/* =========================================
+   MODALS (HELP & AUTH)
+   ========================================= */
+.help-overlay { 
+    display: none; 
+    position: fixed; 
+    top: 0; left: 0; 
+    width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.85); 
+    backdrop-filter: blur(12px); 
+    z-index: 1000; 
+    justify-content: center; 
+    align-items: center; 
+}
+
+.translucent { 
+    background: rgba(25, 25, 25, 0.7) !important; 
+    border: 1px solid rgba(0, 255, 136, 0.2) !important; 
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.help-content {
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+    padding: 50px 40px;
+    position: relative;
+    border-radius: 20px;
+}
+
+.close-help { 
+    position: absolute; 
+    top: 20px; right: 25px; 
+    font-size: 2rem; 
+    color: #444; 
+    cursor: pointer; 
+    transition: 0.3s;
+}
+
+.close-help:hover { color: #fff; }
+
+/* =========================================
+   LANGUES & FOOTER
+   ========================================= */
+.nav-langs {
+    display: flex;
+    gap: 12px;
+    margin-left: 15px;
+    border-left: 1px solid #333;
+    padding-left: 20px;
+}
+
+.nav-langs img { 
+    width: 20px;
+    height: auto;
+    cursor: pointer; 
+    opacity: 0.6; 
     transition: 0.3s; 
 }
-.card:hover { border-color: #00ff88; background: #161616; }
 
-/* Modals */
-.help-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8);
-    backdrop-filter: blur(10px);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
+.nav-langs img:hover { 
+    transform: scale(1.2); 
+    opacity: 1; 
 }
 
-.translucent {
-    background: rgba(20, 20, 20, 0.6) !important;
-    border: 1px solid rgba(0, 255, 136, 0.3) !important;
+footer {
+    border-top: 1px solid #111;
+    margin-top: 50px;
 }
-
-.close-help {
-    position: absolute;
-    top: 15px; right: 20px;
-    font-size: 1.5rem;
-    color: #666;
-    cursor: pointer;
-}
-
-.nav-langs { display: flex; gap: 10px; margin-left: 10px; border-left: 1px solid #333; padding-left: 15px; }

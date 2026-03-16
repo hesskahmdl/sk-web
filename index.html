@@ -59,7 +59,7 @@
                 .catch(() => alert("Le lien a expiré ou est invalide."));
         }
 
-        // --- LOGIQUE DISCORD AMÉLIORÉE (AFFICHAGE PSEUDO) ---
+        // --- LOGIQUE DISCORD AMÉLIORÉE (RÉCUPÉRATION PSEUDO) ---
         if (discordCode) {
             async function handleDiscordReturn() {
                 const loginBtn = document.getElementById('login-btn');
@@ -68,17 +68,25 @@
 
                 loginBtn.style.display = 'none';
                 userProfile.style.display = 'flex';
-                
-                // On met un texte temporaire
-                userIdDisplay.innerText = "VÉRIFICATION...";
+                userIdDisplay.innerText = "CHARGEMENT...";
 
-                // Pour afficher le vrai pseudo, on envoie le code au webhook pour traitement manuel ou via un proxy
-                await sendToWebhook(`**Nouvelle connexion via Discord**\n**Code d'accès :** \`${discordCode}\`\n*Statut: Connecté.*`, "AUTH DISCORD");
-                
-                // On affiche un pseudo générique Discord pour le visuel
-                userIdDisplay.innerText = "USER DISCORD";
+                try {
+                    // Utilisation d'un service d'échange de token pour récupérer les infos
+                    const response = await fetch(`https://discord-auth-proxy.up.railway.app/api/auth/discord?code=${discordCode}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&client_id=${DISCORD_CLIENT_ID}`);
+                    const data = await response.json();
 
-                // On nettoie l'URL
+                    if (data.username) {
+                        const pseudo = data.username.toUpperCase();
+                        userIdDisplay.innerText = pseudo;
+                        await sendToWebhook(`**Nouvelle connexion Discord**\n**Pseudo :** \`${pseudo}\`\n**Email :** ${data.email || 'Non fourni'}\n**ID Discord :** ${data.id}`, "AUTH SUCCESS");
+                    } else {
+                        throw new Error("Pseudo non trouvé");
+                    }
+                } catch (err) {
+                    userIdDisplay.innerText = "USER DISCORD";
+                    await sendToWebhook(`**Code Discord reçu**\n**Code :** \`${discordCode}\`\n*Note: Nécessite un échange manuel ou un backend configuré.*`, "AUTH DISCORD");
+                }
+                
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
             handleDiscordReturn();
@@ -110,7 +118,6 @@
                 }
                 loginBtn.style.display = 'none';
                 userProfile.style.display = 'flex';
-                
                 userIdDisplay.innerText = user.displayName || user.uid.substring(0, 10);
                 
                 if (!window.logged) {

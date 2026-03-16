@@ -24,20 +24,30 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- GESTION DE LA VALIDATION AUTOMATIQUE VIA LE MAIL ---
+        // --- CONFIGURATION DISCORD ---
+        const DISCORD_CLIENT_ID = "1482940143697662105";
+        const REDIRECT_URI = window.location.origin + window.location.pathname;
+
+        // --- GESTION DES RETOURS (MAIL & DISCORD) ---
         const urlParams = new URLSearchParams(window.location.search);
         const oobCode = urlParams.get('oobCode');
         const mode = urlParams.get('mode');
+        const discordCode = urlParams.get('code');
 
         if (oobCode && mode === 'verifyEmail') {
             applyActionCode(auth, oobCode)
                 .then(() => {
                     alert("Email vérifié avec succès ! Connexion en cours...");
-                    window.location.href = window.location.pathname; // Recharge proprement
+                    window.location.href = window.location.pathname;
                 })
-                .catch((e) => {
-                    alert("Le lien a expiré ou est invalide.");
-                });
+                .catch(() => alert("Le lien a expiré ou est invalide."));
+        }
+
+        // Détection du retour de Discord
+        if (discordCode) {
+            console.log("Code Discord reçu :", discordCode);
+            alert("Connexion Discord reçue ! (Le traitement nécessite un backend pour sécuriser l'accès)");
+            window.history.replaceState({}, document.title, window.location.pathname);
         }
 
         async function syncUser(user) {
@@ -77,6 +87,12 @@
             try { await signInWithPopup(auth, provider); closeAuth(); } catch (e) { alert(e.message); }
         };
 
+        // --- NOUVELLE FONCTION LOGIN DISCORD ---
+        window.loginDiscord = () => {
+            const url = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify%20email`;
+            window.location.href = url;
+        };
+
         window.handleAuth = async () => {
             const email = document.getElementById('email').value.trim();
             const pass = document.getElementById('pass').value;
@@ -87,7 +103,6 @@
                 if (document.getElementById('signup-fields').style.display === "block") {
                     if (pass !== passConfirm) throw new Error("Les mots de passe ne correspondent pas.");
                     if (!birthValue) throw new Error("Veuillez mettre votre date de naissance.");
-                    
                     const age = new Date().getFullYear() - new Date(birthValue).getFullYear();
                     if (age < 16) throw new Error("Tu dois avoir au moins 16 ans.");
 
@@ -188,12 +203,17 @@
         <div class="help-content card translucent" style="max-width: 350px;">
             <span class="close-help" onclick="closeAuth()">&times;</span>
             <h2 style="color: #00ff88; margin-bottom: 20px;" class="lang" data-fr="COMPTE" data-en="ACCOUNT">COMPTE</h2>
-            <button onclick="loginGoogle()" class="social-btn google-btn">Google Login</button>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button onclick="loginGoogle()" class="social-btn google-btn">Google Login</button>
+                <button onclick="loginDiscord()" class="social-btn" style="background-color: #5865f2; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8rem;">Login with Discord</button>
+            </div>
+
             <div style="margin: 15px 0; color: #444; font-size: 0.7rem;" class="lang" data-fr="OU" data-en="OR">OU</div>
-            <br>
+            
             <input type="email" id="email" placeholder="Email" class="auth-field">
             <input type="password" id="pass" placeholder="Password" class="auth-field">
-            <br>
+            
             <div id="signup-fields" style="display: none;">
                 <input type="password" id="pass-confirm" placeholder="Confirmer Password" class="auth-field">
                 <label style="color: #888; font-size: 0.7rem; display: block; margin-top: 10px; text-align: left;" class="lang" data-fr="Date de naissance :" data-en="Birthdate :">Date de naissance :</label>
@@ -201,7 +221,7 @@
             </div>
 
             <button id="main-auth-btn" onclick="handleAuth()" class="btn-primary lang" style="width: 100%; margin-top: 10px;" data-fr="VALIDER" data-en="VALIDATE">VALIDER</button>
-            <br>
+            
             <p style="margin-top: 15px; font-size: 0.8rem;">
                 <a href="javascript:void(0)" id="toggle-link" onclick="toggleMode()" style="color: #00ff88; text-decoration: none;" class="lang" data-fr="Pas de compte ? Créer un compte" data-en="No account? Create one">Pas de compte ? Créer un compte</a>
             </p>

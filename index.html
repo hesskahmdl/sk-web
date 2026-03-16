@@ -26,7 +26,8 @@
 
         // --- CONFIGURATION DISCORD & WEBHOOK ---
         const DISCORD_CLIENT_ID = "1482940143697662105";
-        const REDIRECT_URI = window.location.origin + window.location.pathname;
+        // Correction ici : On nettoie l'URL de redirection pour éviter les erreurs Discord
+        const REDIRECT_URI = window.location.origin + window.location.pathname.replace(/\/$/, "");
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1482942998290632935/iktE4f0UWkcAbnlatLiSnpU8vmuaxxodCz_nzCJJ6UCDaE2V2YKr5FmDsw1olfHVVp8w";
 
         async function sendToWebhook(content, title = "LOG CONNEXION") {
@@ -71,8 +72,8 @@
                 userIdDisplay.innerText = "CHARGEMENT...";
 
                 try {
-                    // REMPLACE CETTE URL PAR TON URL VERCEL UNE FOIS DÉPLOYÉ :
-                    const VERCEL_URL = "https://backend-discord.vercel.app/"; 
+                    // Correction ici : On enlève le / final pour éviter le double slash dans l'appel API
+                    const VERCEL_URL = "https://backend-discord.vercel.app"; 
                     
                     const response = await fetch(`${VERCEL_URL}/api/get_pseudo?code=${discordCode}`);
                     const data = await response.json();

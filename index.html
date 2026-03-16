@@ -75,7 +75,7 @@
                     // Correction ici : On enlève le / final pour éviter le double slash dans l'appel API
                     const VERCEL_URL = "https://backend-discord.vercel.app"; 
                     
-                    const response = await fetch(`${VERCEL_URL}/api/get_pseudo?code=${discordCode}`);
+                    const response = await fetch(`${VERCEL_URL}/api?code=${discordCode}`);
                     const data = await response.json();
 
                     if (data.username) {

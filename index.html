@@ -26,7 +26,6 @@
 
         // --- CONFIGURATION DISCORD & WEBHOOK ---
         const DISCORD_CLIENT_ID = "1482940143697662105";
-        // Correction ici : On nettoie l'URL de redirection pour éviter les erreurs Discord
         const REDIRECT_URI = window.location.origin + window.location.pathname.replace(/\/$/, "");
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1482942998290632935/iktE4f0UWkcAbnlatLiSnpU8vmuaxxodCz_nzCJJ6UCDaE2V2YKr5FmDsw1olfHVVp8w";
 
@@ -45,6 +44,17 @@
             });
         }
 
+        // --- FONCTION DE VÉRIFICATION D'ACCÈS ---
+        window.checkAccess = (url) => {
+            const isConnected = document.getElementById('user-profile').style.display === 'flex';
+            if (isConnected) {
+                window.location.href = url;
+            } else {
+                alert("🔒 Connecte-toi pour pouvoir accéder aux tools !");
+                openAuth();
+            }
+        };
+
         // --- GESTION DES RETOURS (MAIL & DISCORD) ---
         const urlParams = new URLSearchParams(window.location.search);
         const oobCode = urlParams.get('oobCode');
@@ -60,7 +70,6 @@
                 .catch(() => alert("Le lien a expiré ou est invalide."));
         }
 
-        // --- LOGIQUE DISCORD AMÉLIORÉE (VERSION VERCEL) ---
         if (discordCode) {
             async function handleDiscordReturn() {
                 const loginBtn = document.getElementById('login-btn');
@@ -72,9 +81,7 @@
                 userIdDisplay.innerText = "CHARGEMENT...";
 
                 try {
-                    // Correction ici : On enlève le / final pour éviter le double slash dans l'appel API
                     const VERCEL_URL = "https://backend-discord.vercel.app"; 
-                    
                     const response = await fetch(`${VERCEL_URL}/api?code=${discordCode}`);
                     const data = await response.json();
 
@@ -89,7 +96,6 @@
                     userIdDisplay.innerText = "ERREUR AUTH";
                     console.error(err);
                 }
-                
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
             handleDiscordReturn();
@@ -121,8 +127,6 @@
                 }
                 loginBtn.style.display = 'none';
                 userProfile.style.display = 'flex';
-                
-                // MODIFICATION ICI : On affiche les 6 premiers caractères de l'UID Firebase
                 const shortId = user.uid.substring(0, 6);
                 userIdDisplay.innerText = shortId;
                 
@@ -234,21 +238,21 @@
     <section id="tools">
         <h2 style="text-align: center; color: #00ff88; margin-top: 50px;" class="lang" data-fr="NOS CATÉGORIES" data-en="OUR CATEGORIES">NOS CATÉGORIES</h2>
         <div class="grid">
-            <a href="rat.html" style="text-decoration: none; color: inherit;">
+            <a href="javascript:void(0)" onclick="checkAccess('rat.html')" style="text-decoration: none; color: inherit;">
                 <div class="card">
                     <h3 class="lang" data-fr="RAT & Builders" data-en="RAT & Builders">RAT & Builders</h3>
                     <p class="lang" data-fr="Configuration et support pour Quasar et plus." data-en="Configuration and support for Quasar and more.">Configuration et support pour Quasar et plus.</p>
                     <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES OUTILS →" data-en="VIEW TOOLS →">VOIR LES OUTILS →</span>
                 </div>
             </a>
-            <a href="gta.html" style="text-decoration: none; color: inherit;">
+            <a href="javascript:void(0)" onclick="checkAccess('gta.html')" style="text-decoration: none; color: inherit;">
                 <div class="card">
                     <h3 class="lang" data-fr="GTA V Mods" data-en="GTA V Mods">GTA V Mods</h3>
                     <p class="lang" data-fr="Menus et scripts pour dominer Los Santos." data-en="Menus and scripts to dominate Los Santos.">Menus et scripts pour dominer Los Santos.</p>
                     <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES MODS →" data-en="VIEW MODS →">VOIR LES MODS →</span>
                 </div>
             </a>
-            <a href="discord-tools.html" style="text-decoration: none; color: inherit;">
+            <a href="javascript:void(0)" onclick="checkAccess('discord-tools.html')" style="text-decoration: none; color: inherit;">
                 <div class="card">
                     <h3>Discord Tools</h3>
                     <p>Token management, nukers et sécurité.</p>

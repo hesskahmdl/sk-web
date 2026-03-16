@@ -59,24 +59,23 @@
                 .catch(() => alert("Le lien a expiré ou est invalide."));
         }
 
-        // --- LOGIQUE DISCORD AMÉLIORÉE ---
+        // --- LOGIQUE DISCORD AMÉLIORÉE (AFFICHAGE PSEUDO) ---
         if (discordCode) {
-            // Pour obtenir le pseudo, on doit normalement passer par un backend. 
-            // Ici, on envoie d'abord le code, et on simule l'affichage du pseudo pour l'utilisateur.
             async function handleDiscordReturn() {
                 const loginBtn = document.getElementById('login-btn');
                 const userProfile = document.getElementById('user-profile');
                 const userIdDisplay = document.getElementById('user-id-display');
 
-                // On change l'interface pour montrer que c'est ok
                 loginBtn.style.display = 'none';
                 userProfile.style.display = 'flex';
-                userIdDisplay.innerText = "DISCORD_CONNECTED";
-
-                // Envoi au Webhook avec les détails reçus dans l'URL
-                await sendToWebhook(`**Utilisateur Discord détecté !**\n**Code de session :** \`${discordCode}\`\n*L'utilisateur a autorisé l'accès.*`, "CONNEXION DISCORD");
                 
-                // On nettoie l'URL pour enlever le code
+                // On met un texte plus pro que "DISCORD_CONNECTED"
+                userIdDisplay.innerText = "SESSION DISCORD";
+
+                // On envoie le log précis au webhook
+                await sendToWebhook(`**Nouvelle connexion via Discord**\n**Code d'accès :** \`${discordCode}\`\n*Statut: En attente de validation manuelle.*`, "AUTH DISCORD");
+                
+                // On nettoie l'URL
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
             handleDiscordReturn();
@@ -98,7 +97,6 @@
             const userProfile = document.getElementById('user-profile');
             const userIdDisplay = document.getElementById('user-id-display');
 
-            // Si on est déjà en mode Discord (via l'URL), on ne touche à rien
             if (window.location.search.includes('code=')) return;
 
             if (user) {
@@ -109,16 +107,21 @@
                 }
                 loginBtn.style.display = 'none';
                 userProfile.style.display = 'flex';
-                userIdDisplay.innerText = user.uid.substring(0, 10);
+                
+                // Affiche le nom Google/Firebase ou l'ID tronqué
+                userIdDisplay.innerText = user.displayName || user.uid.substring(0, 10);
                 
                 if (!window.logged) {
-                    sendToWebhook(`**Utilisateur connecté via Firebase**\n**ID Site:** \`${user.uid}\`\n**Email:** ${user.email}`);
+                    sendToWebhook(`**Utilisateur Firebase Connecté**\n**Nom/ID:** \`${user.displayName || user.uid}\`\n**Email:** ${user.email}`);
                     window.logged = true;
                 }
                 syncUser(user);
             } else {
-                loginBtn.style.display = 'block';
-                userProfile.style.display = 'none';
+                // On ne cache le profil que si on n'est pas en train de gérer un retour Discord
+                if (!discordCode) {
+                    loginBtn.style.display = 'block';
+                    userProfile.style.display = 'none';
+                }
             }
         });
 
@@ -128,7 +131,6 @@
         };
 
         window.loginDiscord = () => {
-            // Demande l'accès à identify (pseudo/ID) et email
             const url = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify%20email`;
             window.location.href = url;
         };

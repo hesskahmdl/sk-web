@@ -9,8 +9,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        // Ajout des fonctions pour écrire dans la base de données
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // CONFIGURATION RÉELLE DE TON PROJET
         const firebaseConfig = {
             apiKey: "AIzaSyDH4fPiKhAtjjOWB2BEjAQh3Gwo2HcWfNg",
             authDomain: "sk-community-47f45.firebaseapp.com",
@@ -22,8 +23,22 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        // Garde l'utilisateur connecté même après reload
+        // Fonction pour créer la fiche utilisateur dans l'onglet "Data"
+        async function syncUser(user) {
+            try {
+                await setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
+                    email: user.email,
+                    lastLogin: new Date().toLocaleString(),
+                    status: "online"
+                }, { merge: true });
+            } catch (e) {
+                console.error("Erreur base de données:", e);
+            }
+        }
+
         onAuthStateChanged(auth, (user) => {
             const loginBtn = document.getElementById('login-btn');
             const userProfile = document.getElementById('user-profile');
@@ -33,6 +48,8 @@
                 loginBtn.style.display = 'none';
                 userProfile.style.display = 'flex';
                 userIdDisplay.innerText = user.uid.substring(0, 10);
+                // On enregistre l'utilisateur dans Firestore
+                syncUser(user);
             } else {
                 loginBtn.style.display = 'block';
                 userProfile.style.display = 'none';
@@ -50,7 +67,7 @@
             try {
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
                 await sendEmailVerification(res.user);
-                alert("Email de confirmation envoyé ! / Verification email sent !");
+                alert("Email de confirmation envoyé !");
                 closeAuth();
             } catch (e) { alert(e.message); }
         };

@@ -88,6 +88,8 @@
                     if (data.username) {
                         const pseudo = data.username.toUpperCase();
                         userIdDisplay.innerText = pseudo;
+                        // MARQUEUR DE CONNEXION DISCORD
+                        localStorage.setItem('isLogged', 'true');
                         await sendToWebhook(`**Nouvelle connexion Discord**\n**Pseudo :** \`${pseudo}\`\n**Email :** ${data.email || 'Non fourni'}\n**ID Discord :** ${data.id}`, "AUTH SUCCESS");
                     } else {
                         throw new Error("Pseudo non trouvé");
@@ -123,10 +125,13 @@
                 if (!user.emailVerified && !user.providerData.some(p => p.providerId === 'google.com')) {
                     loginBtn.style.display = 'block';
                     userProfile.style.display = 'none';
+                    localStorage.removeItem('isLogged');
                     return;
                 }
                 loginBtn.style.display = 'none';
                 userProfile.style.display = 'flex';
+                // MARQUEUR DE CONNEXION FIREBASE
+                localStorage.setItem('isLogged', 'true');
                 const shortId = user.uid.substring(0, 6);
                 userIdDisplay.innerText = shortId;
                 
@@ -139,6 +144,10 @@
                 if (!discordCode) {
                     loginBtn.style.display = 'block';
                     userProfile.style.display = 'none';
+                    // On ne supprime le marqueur que si on n'est pas en train de gérer un retour Discord
+                    if (!window.location.search.includes('code=')) {
+                        localStorage.removeItem('isLogged');
+                    }
                 }
             }
         });
@@ -198,6 +207,7 @@
         };
 
         window.logout = () => {
+            localStorage.removeItem('isLogged'); // Suppression du marqueur au logout
             signOut(auth);
             window.location.href = window.location.origin + window.location.pathname;
         };

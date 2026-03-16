@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SK COMMUNITY | Tech & Modding</title>
     <link rel="stylesheet" href="style.css">
-    
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Tes clés Firebase (Intégrées)
         const firebaseConfig = {
             apiKey: "AIzaSyDH4fPiKhAtjjOWB2BEjAQh3Gwo2HcWfNg",
             authDomain: "sk-community-47f45.firebaseapp.com",
@@ -25,54 +24,47 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Sauvegarder l'utilisateur dans la base de données
-        async function saveUserToDB(user) {
+        // Sauvegarde auto dans Firestore
+        async function saveUser(user) {
             await setDoc(doc(db, "users", user.uid), {
                 uid: user.uid,
                 email: user.email,
-                lastLogin: new Date(),
-                purchases: [] // Tu pourras voir ça dans Firestore
+                lastSeen: new Date()
             }, { merge: true });
         }
 
-        // Persistance de la connexion au reload
+        // Surveillance de la session (Persistance)
         onAuthStateChanged(auth, (user) => {
             const loginBtn = document.getElementById('login-btn');
-            const userProfile = document.getElementById('user-profile');
-            const userIdDisplay = document.getElementById('user-id-display');
+            const profile = document.getElementById('user-profile');
+            const uidText = document.getElementById('uid-text');
 
             if (user) {
-                loginBtn.style.display = 'none';
-                userProfile.style.display = 'flex';
-                userIdDisplay.innerText = user.uid.substring(0, 10);
-                saveUserToDB(user);
+                if(loginBtn) loginBtn.style.display = 'none';
+                if(profile) profile.style.display = 'flex';
+                if(uidText) uidText.innerText = user.uid.substring(0, 8);
+                saveUser(user);
             } else {
-                loginBtn.style.display = 'block';
-                userProfile.style.display = 'none';
+                if(loginBtn) loginBtn.style.display = 'block';
+                if(profile) profile.style.display = 'none';
             }
         });
 
-        // Connexion Google
+        // Fonctions globales
         window.loginGoogle = async () => {
-            const provider = new GoogleAuthProvider();
-            try { 
-                await signInWithPopup(auth, provider); 
-                closeAuth(); 
-            } catch (e) { alert("Erreur Google: " + e.message); }
+            try { await signInWithPopup(auth, new GoogleAuthProvider()); closeAuth(); } 
+            catch (e) { alert(e.message); }
         };
 
-        // Inscription Email + Envoi Confirmation
         window.signUpEmail = async () => {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('pass').value;
-            if(!email || !pass) return alert("Remplis les champs !");
-            
+            const email = document.getElementById('email-input').value;
+            const pass = document.getElementById('pass-input').value;
             try {
                 const res = await createUserWithEmailAndPassword(auth, email, pass);
                 await sendEmailVerification(res.user);
-                alert("Email de confirmation envoyé ! Vérifiez vos spams.");
+                alert("Lien de vérification envoyé !");
                 closeAuth();
-            } catch (e) { alert("Erreur: " + e.message); }
+            } catch (e) { alert(e.message); }
         };
 
         window.logout = () => signOut(auth);
@@ -81,25 +73,29 @@
 <body>
     <header>
         <nav>
-            <div class="nav-left">
+            <div class="nav-left" style="flex: 1; display: flex; justify-content: flex-start;">
                 <button id="login-btn" onclick="openAuth()" class="auth-trigger lang" data-fr="CONNEXION" data-en="LOGIN">CONNEXION</button>
                 <div id="user-profile" style="display: none; align-items: center; gap: 10px;">
-                    <span id="user-id-display" style="color: #00ff88; font-size: 0.7rem; font-family: monospace; border: 1px solid #333; padding: 2px 5px; border-radius: 3px;"></span>
-                    <button onclick="logout()" class="logout-btn">✖</button>
+                    <span id="uid-text" style="color: #00ff88; font-family: monospace; font-size: 0.7rem; border: 1px solid #333; padding: 2px 6px; border-radius: 4px;"></span>
+                    <button onclick="logout()" style="background:none; border:none; color:#ff4444; cursor:pointer; font-weight:bold;">✖</button>
                 </div>
             </div>
 
-            <div class="logo-container">
-                <div class="logo">SK COMMUNITY</div>
+            <div class="logo">SK COMMUNITY</div>
+            
+            <div class="nav-center">
+                <span style="color: #00ff88; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">
+                    ⚠️ Usage strictement éducatif et éthique / Educational & Ethical purposes only.
+                </span>
             </div>
 
-            <ul>
+            <ul style="flex: 1; justify-content: flex-end;">
                 <li><a href="#home" class="lang" data-fr="Accueil" data-en="Home">Accueil</a></li>
                 <li><a href="#tools" class="lang" data-fr="Tools" data-en="Tools">Tools</a></li>
                 <li><a href="#" onclick="openHelp()" class="lang" data-fr="Help" data-en="Help">Help</a></li>
                 <li class="nav-langs">
-                    <img src="https://flagcdn.com/w20/fr.png" onclick="setLanguage('fr')" alt="FR">
-                    <img src="https://flagcdn.com/w20/us.png" onclick="setLanguage('en')" alt="EN">
+                    <img src="https://flagcdn.com/w20/fr.png" onclick="setLanguage('fr')" style="cursor:pointer; opacity:0.8;" alt="FR">
+                    <img src="https://flagcdn.com/w20/us.png" onclick="setLanguage('en')" style="cursor:pointer; opacity:0.8;" alt="EN">
                 </li>
             </ul>
         </nav>
@@ -107,24 +103,49 @@
 
     <section id="home" class="hero">
         <h1 class="lang" data-fr="L'ÉLITE DU MODDING ET DES TOOLS" data-en="THE ELITE OF MODDING & TOOLS">L'ÉLITE DU MODDING ET DES TOOLS</h1>
+        <p class="lang" data-fr="Accédez à des ressources exclusives et apprenez avec la communauté." data-en="Access exclusive resources and learn with the community.">Accédez à des ressources exclusives et apprenez avec la communauté.</p>
         <div class="buttons">
             <a href="https://discord.gg/JKaUWpNd" class="btn-primary lang" data-fr="Rejoindre maintenant" data-en="Join now">Rejoindre maintenant</a>
+            <a href="#tools" class="btn-secondary lang" data-fr="Voir les outils" data-en="View tools">Voir les outils</a>
+        </div>
+    </section>
+
+    <section id="tools">
+        <h2 style="text-align: center; color: #00ff88; margin-top: 50px;" class="lang" data-fr="NOS CATÉGORIES" data-en="OUR CATEGORIES">NOS CATÉGORIES</h2>
+        <div class="grid">
+            <a href="rat.html" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <h3 class="lang" data-fr="RAT & Builders" data-en="RAT & Builders">RAT & Builders</h3>
+                    <p class="lang" data-fr="Configuration et support pour Quasar et plus." data-en="Configuration and support for Quasar and more.">Configuration et support pour Quasar et plus.</p>
+                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES OUTILS →" data-en="VIEW TOOLS →">VOIR LES OUTILS →</span>
+                </div>
+            </a>
+            <a href="gta.html" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <h3 class="lang" data-fr="GTA V Mods" data-en="GTA V Mods">GTA V Mods</h3>
+                    <p class="lang" data-fr="Menus et scripts pour dominer Los Santos." data-en="Menus and scripts to dominate Los Santos.">Menus et scripts pour dominer Los Santos.</p>
+                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES MODS →" data-en="VIEW MODS →">VOIR LES MODS →</span>
+                </div>
+            </a>
+            <a href="discord-tools.html" style="text-decoration: none; color: inherit;">
+                <div class="card">
+                    <h3 class="lang" data-fr="Discord Tools" data-en="Discord Tools">Discord Tools</h3>
+                    <p class="lang" data-fr="Token management, nukers et sécurité." data-en="Token management, nukers and security.">Token management, nukers et sécurité.</p>
+                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES TOOLS →" data-en="VIEW TOOLS →">VOIR LES TOOLS →</span>
+                </div>
+            </a>
         </div>
     </section>
 
     <div id="authModal" class="help-overlay">
         <div class="help-content card translucent" style="max-width: 350px;">
             <span class="close-help" onclick="closeAuth()">&times;</span>
-            <h2 style="color: #00ff88; margin-bottom: 20px;" class="lang" data-fr="BIENVENUE" data-en="WELCOME">BIENVENUE</h2>
-            
+            <h2 style="color: #00ff88; margin-bottom: 20px;">ACCOUNT</h2>
             <button onclick="loginGoogle()" class="social-btn google-btn">Google Login</button>
-            
-            <div style="margin: 15px 0; color: #444; font-size: 0.7rem;" class="lang" data-fr="OU EMAIL" data-en="OR EMAIL">OU EMAIL</div>
-            
-            <input type="email" id="email" placeholder="Email" class="auth-field">
-            <input type="password" id="pass" placeholder="Password" class="auth-field">
-            
-            <button onclick="signUpEmail()" class="btn-primary lang" style="width: 100%; margin-top: 10px;" data-fr="S'INSCRIRE" data-en="SIGN UP">S'INSCRIRE</button>
+            <hr style="border: 0.5px solid #222; margin: 20px 0;">
+            <input type="email" id="email-input" placeholder="Email" class="auth-field">
+            <input type="password" id="pass-input" placeholder="Password" class="auth-field">
+            <button onclick="signUpEmail()" class="btn-primary" style="width: 100%; margin-top: 10px;">S'INSCRIRE</button>
         </div>
     </div>
 
@@ -132,24 +153,40 @@
         <div class="help-content card translucent">
             <span class="close-help" onclick="closeHelp()">&times;</span>
             <h2 style="color: #00ff88;">HELP</h2>
-            <p class="lang" data-fr="Ouvrez un ticket sur Discord en cas de problème." data-en="Open a ticket on Discord if you have an issue.">Ouvrez un ticket sur Discord en cas de problème.</p>
-            <a href="https://discord.gg/JKaUWpNd" class="btn-primary lang" data-fr="DISCORD" data-en="DISCORD">DISCORD</a>
+            <p id="help-text" class="lang" style="margin: 20px 0; line-height: 1.6; font-size: 0.95rem;" 
+               data-fr="Si vous avez besoin d'aide ou un problème, ouvrez un ticket sur le discord :" 
+               data-en="If you need help or have an issue, open a ticket on discord:">
+               Si vous avez besoin d'aide ou un problème, ouvrez un ticket sur le discord :
+            </p>
+            <a href="https://discord.gg/JKaUWpNd" class="btn-primary lang" data-fr="OUVRIR UN TICKET" data-en="OPEN A TICKET">OUVRIR UN TICKET</a>
         </div>
     </div>
 
+    <footer>
+        <p style="text-align: center; padding: 40px; color: #444; font-size: 0.9rem;" class="lang" data-fr="&copy; 2026 SK COMMUNITY - Tous droits réservés." data-en="&copy; 2026 SK COMMUNITY - All rights reserved.">
+            &copy; 2026 SK COMMUNITY - Tous droits réservés.
+        </p>
+    </footer>
+
     <script>
         function setLanguage(lang) {
-            document.querySelectorAll('.lang').forEach(el => {
-                const text = el.getAttribute('data-' + lang);
-                if (text) el.innerHTML = text;
+            const elements = document.querySelectorAll('.lang');
+            elements.forEach(el => {
+                const translation = el.getAttribute('data-' + lang);
+                if (translation) { el.innerHTML = translation; }
             });
             localStorage.setItem('selectedLang', lang);
         }
+
         function openHelp() { document.getElementById('helpModal').style.display = 'flex'; }
         function closeHelp() { document.getElementById('helpModal').style.display = 'none'; }
         function openAuth() { document.getElementById('authModal').style.display = 'flex'; }
         function closeAuth() { document.getElementById('authModal').style.display = 'none'; }
-        window.onload = () => { setLanguage(localStorage.getItem('selectedLang') || 'fr'); };
+
+        window.onload = () => {
+            const savedLang = localStorage.getItem('selectedLang') || 'fr';
+            setLanguage(savedLang);
+        };
     </script>
 </body>
 </html>

@@ -8,8 +8,7 @@
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        // Ajout des fonctions pour écrire dans la base de données
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -25,7 +24,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Fonction pour créer la fiche utilisateur dans l'onglet "Data"
         async function syncUser(user) {
             try {
                 await setDoc(doc(db, "users", user.uid), {
@@ -34,9 +32,7 @@
                     lastLogin: new Date().toLocaleString(),
                     status: "online"
                 }, { merge: true });
-            } catch (e) {
-                console.error("Erreur base de données:", e);
-            }
+            } catch (e) { console.error("Erreur base de données:", e); }
         }
 
         onAuthStateChanged(auth, (user) => {
@@ -45,10 +41,14 @@
             const userIdDisplay = document.getElementById('user-id-display');
 
             if (user) {
+                if (!user.emailVerified && !user.providerData.some(p => p.providerId === 'google.com')) {
+                    loginBtn.style.display = 'block';
+                    userProfile.style.display = 'none';
+                    return;
+                }
                 loginBtn.style.display = 'none';
                 userProfile.style.display = 'flex';
                 userIdDisplay.innerText = user.uid.substring(0, 10);
-                // On enregistre l'utilisateur dans Firestore
                 syncUser(user);
             } else {
                 loginBtn.style.display = 'block';
@@ -61,15 +61,49 @@
             try { await signInWithPopup(auth, provider); closeAuth(); } catch (e) { alert(e.message); }
         };
 
-        window.signUpEmail = async () => {
-            const email = document.getElementById('email').value;
+        window.handleAuth = async () => {
+            const email = document.getElementById('email').value.trim();
             const pass = document.getElementById('pass').value;
+            const passConfirm = document.getElementById('pass-confirm').value;
+            const birthValue = document.getElementById('birthdate').value;
+
             try {
-                const res = await createUserWithEmailAndPassword(auth, email, pass);
-                await sendEmailVerification(res.user);
-                alert("Email de confirmation envoyé !");
-                closeAuth();
+                if (document.getElementById('signup-fields').style.display === "block") {
+                    if (pass !== passConfirm) throw new Error("Les mots de passe ne correspondent pas.");
+                    if (!birthValue) throw new Error("Veuillez mettre votre date de naissance.");
+                    
+                    const age = new Date().getFullYear() - new Date(birthValue).getFullYear();
+                    if (age < 16) throw new Error("Tu dois avoir au moins 16 ans.");
+
+                    const res = await createUserWithEmailAndPassword(auth, email, pass);
+                    await sendEmailVerification(res.user);
+                    alert("Email de confirmation envoyé ! Vérifie tes spams.");
+                    await signOut(auth); 
+                    closeAuth();
+                } else {
+                    const res = await signInWithEmailAndPassword(auth, email, pass);
+                    if (!res.user.emailVerified) {
+                        await signOut(auth);
+                        throw new Error("Compte non vérifié. Regarde tes emails !");
+                    }
+                    closeAuth();
+                }
             } catch (e) { alert(e.message); }
+        };
+
+        window.toggleMode = () => {
+            const fields = document.getElementById('signup-fields');
+            const btn = document.getElementById('main-auth-btn');
+            const link = document.getElementById('toggle-link');
+            if (fields.style.display === "none") {
+                fields.style.display = "block";
+                btn.innerText = "CRÉER MON COMPTE";
+                link.innerText = "Déjà un compte ? Se connecter";
+            } else {
+                fields.style.display = "none";
+                btn.innerText = "VALIDER";
+                link.innerText = "Pas de compte ? Créer un compte";
+            }
         };
 
         window.logout = () => signOut(auth);
@@ -85,11 +119,7 @@
                     <button onclick="logout()" class="logout-btn">✖</button>
                 </div>
             </div>
-
-            <div class="logo-container">
-                <div class="logo">SK COMMUNITY</div>
-            </div>
-
+            <div class="logo-container"><div class="logo">SK COMMUNITY</div></div>
             <ul>
                 <li><a href="#home" class="lang" data-fr="Accueil" data-en="Home">Accueil</a></li>
                 <li><a href="#tools" class="lang" data-fr="Tools" data-en="Tools">Tools</a></li>
@@ -144,9 +174,21 @@
             <h2 style="color: #00ff88; margin-bottom: 20px;" class="lang" data-fr="COMPTE" data-en="ACCOUNT">COMPTE</h2>
             <button onclick="loginGoogle()" class="social-btn google-btn">Google Login</button>
             <div style="margin: 15px 0; color: #444; font-size: 0.7rem;" class="lang" data-fr="OU" data-en="OR">OU</div>
+            
             <input type="email" id="email" placeholder="Email" class="auth-field">
             <input type="password" id="pass" placeholder="Password" class="auth-field">
-            <button onclick="signUpEmail()" class="btn-primary lang" style="width: 100%; margin-top: 10px;" data-fr="VALIDER" data-en="VALIDATE">VALIDER</button>
+            
+            <div id="signup-fields" style="display: none;">
+                <input type="password" id="pass-confirm" placeholder="Confirmer Password" class="auth-field">
+                <label style="color: #888; font-size: 0.7rem; display: block; margin-top: 10px; text-align: left;" class="lang" data-fr="Date de naissance :" data-en="Birthdate :">Date de naissance :</label>
+                <input type="date" id="birthdate" class="auth-field">
+            </div>
+
+            <button id="main-auth-btn" onclick="handleAuth()" class="btn-primary lang" style="width: 100%; margin-top: 10px;" data-fr="VALIDER" data-en="VALIDATE">VALIDER</button>
+            
+            <p style="margin-top: 15px; font-size: 0.8rem;">
+                <a href="javascript:void(0)" id="toggle-link" onclick="toggleMode()" style="color: #00ff88; text-decoration: none;" class="lang" data-fr="Pas de compte ? Créer un compte" data-en="No account? Create one">Pas de compte ? Créer un compte</a>
+            </p>
         </div>
     </div>
 
@@ -154,19 +196,13 @@
         <div class="help-content card translucent">
             <span class="close-help" onclick="closeHelp()">&times;</span>
             <h2 style="color: #00ff88;">HELP</h2>
-            <p id="help-text" class="lang" style="margin: 20px 0; line-height: 1.6; font-size: 0.95rem;" 
-               data-fr="Si vous avez besoin d'aide ou un problème, ouvrez un ticket sur le discord :" 
-               data-en="If you need help or have an issue, open a ticket on discord:">
-               Si vous avez besoin d'aide ou un problème, ouvrez un ticket sur le discord :
-            </p>
+            <p style="margin: 20px 0; line-height: 1.6; font-size: 0.95rem;" class="lang" data-fr="Si vous avez besoin d'aide ou un problème, ouvrez un ticket sur le discord :" data-en="If you need help or have an issue, open a ticket on discord:">Si vous avez besoin d'aide ou un problème, ouvrez un ticket sur le discord :</p>
             <a href="https://discord.gg/JKaUWpNd" class="btn-primary lang" data-fr="OUVRIR UN TICKET" data-en="OPEN A TICKET">OUVRIR UN TICKET</a>
         </div>
     </div>
 
     <footer>
-        <p style="text-align: center; padding: 40px; color: #444; font-size: 0.9rem;" class="lang" data-fr="&copy; 2026 SK COMMUNITY - Tous droits réservés." data-en="&copy; 2026 SK COMMUNITY - All rights reserved.">
-            &copy; 2026 SK COMMUNITY - Tous droits réservés.
-        </p>
+        <p style="text-align: center; padding: 40px; color: #444; font-size: 0.9rem;" class="lang" data-fr="&copy; 2026 SK COMMUNITY - Tous droits réservés." data-en="&copy; 2026 SK COMMUNITY - All rights reserved.">&copy; 2026 SK COMMUNITY - Tous droits réservés.</p>
     </footer>
 
     <script>

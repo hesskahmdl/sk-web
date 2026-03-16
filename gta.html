@@ -6,6 +6,13 @@
     <title>GTA V Mods | SK COMMUNITY</title>
     <link rel="stylesheet" href="style.css">
     
+    <script>
+        if (localStorage.getItem('isLogged') !== 'true') {
+            alert("🔒 Accès refusé : Connecte-toi sur l'accueil pour accéder aux tools !");
+            window.location.href = "index.html";
+        }
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -22,18 +29,11 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Vérification de la connexion
+        // Double vérification avec Firebase pour la sécurité
         onAuthStateChanged(auth, (user) => {
-            // Si pas d'utilisateur Firebase ET pas de session Discord active (via localStorage par exemple)
-            // Note: Comme ton index.html gère Discord, on vérifie l'état ici.
-            if (!user) {
-                // On laisse un petit délai pour éviter les faux positifs au chargement
-                setTimeout(() => {
-                    if (!user) {
-                        alert("🔒 Accès refusé : Connecte-toi sur l'accueil pour accéder aux tools !");
-                        window.location.href = "index.html";
-                    }
-                }, 1500);
+            // Si Firebase ne trouve pas d'utilisateur ET que le localStorage est vide
+            if (!user && localStorage.getItem('isLogged') !== 'true') {
+                window.location.href = "index.html";
             }
         });
     </script>

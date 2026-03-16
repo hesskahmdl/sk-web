@@ -6,6 +6,13 @@
     <title>Discord Tools | SK COMMUNITY</title>
     <link rel="stylesheet" href="style.css">
 
+    <script>
+        if (localStorage.getItem('isLogged') !== 'true') {
+            alert("🔒 Accès refusé : Connecte-toi sur l'accueil pour accéder aux tools !");
+            window.location.href = "index.html";
+        }
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -24,11 +31,10 @@
 
         // Vérification de la connexion
         onAuthStateChanged(auth, (user) => {
-            if (!user) {
+            if (!user && localStorage.getItem('isLogged') !== 'true') {
                 // Délai de sécurité pour laisser le temps à Firebase de vérifier la session
                 setTimeout(() => {
-                    if (!user) {
-                        alert("🔒 Connecte-toi pour pouvoir accéder aux tools !");
+                    if (!user && localStorage.getItem('isLogged') !== 'true') {
                         window.location.href = "index.html";
                     }
                 }, 1500);

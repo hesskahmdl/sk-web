@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -35,6 +34,7 @@
         const mode = urlParams.get('mode');
         const discordCode = urlParams.get('code');
 
+        // Gestion Validation Email
         if (oobCode && mode === 'verifyEmail') {
             applyActionCode(auth, oobCode)
                 .then(() => {
@@ -44,11 +44,24 @@
                 .catch(() => alert("Le lien a expiré ou est invalide."));
         }
 
-        // Détection du retour de Discord
-        if (discordCode) {
-            console.log("Code Discord reçu :", discordCode);
-            alert("Connexion Discord reçue ! (Le traitement nécessite un backend pour sécuriser l'accès)");
+        // --- GESTION LOGIQUE DISCORD (FRONT-END SIMULATION) ---
+        async function handleDiscordLogin(code) {
+            const loginBtn = document.getElementById('login-btn');
+            const userProfile = document.getElementById('user-profile');
+            const userIdDisplay = document.getElementById('user-id-display');
+
+            // On simule l'état connecté pour l'UI
+            loginBtn.style.display = 'none';
+            userProfile.style.display = 'flex';
+            userIdDisplay.innerText = "DISCORD_" + code.substring(0, 6);
+            
+            // On nettoie l'URL pour enlever le ?code=...
             window.history.replaceState({}, document.title, window.location.pathname);
+            console.log("Session Discord active (ID temporaire)");
+        }
+
+        if (discordCode) {
+            handleDiscordLogin(discordCode);
         }
 
         async function syncUser(user) {
@@ -77,7 +90,7 @@
                 userProfile.style.display = 'flex';
                 userIdDisplay.innerText = user.uid.substring(0, 10);
                 syncUser(user);
-            } else {
+            } else if (!discordCode) { // On ne cache pas si on vient de se connecter via Discord
                 loginBtn.style.display = 'block';
                 userProfile.style.display = 'none';
             }
@@ -88,7 +101,6 @@
             try { await signInWithPopup(auth, provider); closeAuth(); } catch (e) { alert(e.message); }
         };
 
-        // --- NOUVELLE FONCTION LOGIN DISCORD ---
         window.loginDiscord = () => {
             const url = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify%20email`;
             window.location.href = url;
@@ -109,14 +121,14 @@
 
                     const res = await createUserWithEmailAndPassword(auth, email, pass);
                     await sendEmailVerification(res.user);
-                    alert("Email de confirmation envoyé ! Vérifie tes spams.");
+                    alert("Email envoyé ! Vérifie tes spams.");
                     await signOut(auth); 
                     closeAuth();
                 } else {
                     const res = await signInWithEmailAndPassword(auth, email, pass);
                     if (!res.user.emailVerified) {
                         await signOut(auth);
-                        throw new Error("Compte non vérifié. Regarde tes emails !");
+                        throw new Error("Compte non vérifié !");
                     }
                     closeAuth();
                 }
@@ -138,7 +150,10 @@
             }
         };
 
-        window.logout = () => signOut(auth);
+        window.logout = () => {
+            signOut(auth);
+            window.location.href = window.location.pathname; // Reset total
+        };
     </script>
 </head>
 <body>
@@ -166,37 +181,10 @@
 
     <section id="home" class="hero">
         <h1 class="lang" data-fr="L'ÉLITE DU MODDING ET DES TOOLS" data-en="THE ELITE OF MODDING & TOOLS">L'ÉLITE DU MODDING ET DES TOOLS</h1>
-        <p class="lang" data-fr="Accédez à des ressources exclusives et apprenez avec la communauté." data-en="Access exclusive resources and learn with the community.">Accédez à des ressources exclusives et apprenez avec la communauté.</p>
+        <p class="lang" data-fr="Accédez à des ressources exclusives." data-en="Access exclusive resources.">Accédez à des ressources exclusives.</p>
         <div class="buttons">
-            <a href="https://discord.gg/JKaUWpNd" class="btn-primary lang" data-fr="Rejoindre maintenant" data-en="Join now">Rejoindre maintenant</a>
-            <a href="#tools" class="btn-secondary lang" data-fr="Voir les outils" data-en="View tools">Voir les outils</a>
-        </div>
-    </section>
-
-    <section id="tools">
-        <h2 style="text-align: center; color: #00ff88; margin-top: 50px;" class="lang" data-fr="NOS CATÉGORIES" data-en="OUR CATEGORIES">NOS CATÉGORIES</h2>
-        <div class="grid">
-            <a href="rat.html" style="text-decoration: none; color: inherit;">
-                <div class="card">
-                    <h3 class="lang" data-fr="RAT & Builders" data-en="RAT & Builders">RAT & Builders</h3>
-                    <p class="lang" data-fr="Configuration et support pour Quasar et plus." data-en="Configuration and support for Quasar and more.">Configuration et support pour Quasar et plus.</p>
-                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES OUTILS →" data-en="VIEW TOOLS →">VOIR LES OUTILS →</span>
-                </div>
-            </a>
-            <a href="gta.html" style="text-decoration: none; color: inherit;">
-                <div class="card">
-                    <h3 class="lang" data-fr="GTA V Mods" data-en="GTA V Mods">GTA V Mods</h3>
-                    <p class="lang" data-fr="Menus et scripts pour dominer Los Santos." data-en="Menus and scripts to dominate Los Santos.">Menus et scripts pour dominer Los Santos.</p>
-                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;" class="lang" data-fr="VOIR LES MODS →" data-en="VIEW MODS →">VOIR LES MODS →</span>
-                </div>
-            </a>
-            <a href="discord-tools.html" style="text-decoration: none; color: inherit;">
-                <div class="card">
-                    <h3>Discord Tools</h3>
-                    <p>Token management, nukers et sécurité.</p>
-                    <span style="color: #00ff88; font-size: 0.8rem; font-weight: bold;">VOIR LES TOOLS →</span>
-                </div>
-            </a>
+            <a href="https://discord.gg/JKaUWpNd" class="btn-primary lang" data-fr="Rejoindre" data-en="Join">Rejoindre</a>
+            <a href="#tools" class="btn-secondary lang" data-fr="Outils" data-en="Tools">Outils</a>
         </div>
     </section>
 
@@ -207,7 +195,7 @@
             
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button onclick="loginGoogle()" class="social-btn google-btn">Google Login</button>
-                <button onclick="loginDiscord()" class="social-btn" style="background-color: #5865f2; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8rem;">Login with Discord</button>
+                <button onclick="loginDiscord()" class="social-btn" style="background-color: #5865f2; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8rem; box-shadow: 0 0 10px rgba(88, 101, 242, 0.3);">Login with Discord</button>
             </div>
 
             <div style="margin: 15px 0; color: #444; font-size: 0.7rem;" class="lang" data-fr="OU" data-en="OR">OU</div>
@@ -216,31 +204,16 @@
             <input type="password" id="pass" placeholder="Password" class="auth-field">
             
             <div id="signup-fields" style="display: none;">
-                <input type="password" id="pass-confirm" placeholder="Confirmer Password" class="auth-field">
-                <label style="color: #888; font-size: 0.7rem; display: block; margin-top: 10px; text-align: left;" class="lang" data-fr="Date de naissance :" data-en="Birthdate :">Date de naissance :</label>
+                <input type="password" id="pass-confirm" placeholder="Confirmer" class="auth-field">
                 <input type="date" id="birthdate" class="auth-field">
             </div>
 
             <button id="main-auth-btn" onclick="handleAuth()" class="btn-primary lang" style="width: 100%; margin-top: 10px;" data-fr="VALIDER" data-en="VALIDATE">VALIDER</button>
-            
             <p style="margin-top: 15px; font-size: 0.8rem;">
-                <a href="javascript:void(0)" id="toggle-link" onclick="toggleMode()" style="color: #00ff88; text-decoration: none;" class="lang" data-fr="Pas de compte ? Créer un compte" data-en="No account? Create one">Pas de compte ? Créer un compte</a>
+                <a href="javascript:void(0)" id="toggle-link" onclick="toggleMode()" style="color: #00ff88; text-decoration: none;">Créer un compte</a>
             </p>
         </div>
     </div>
-
-    <div id="helpModal" class="help-overlay">
-        <div class="help-content card translucent">
-            <span class="close-help" onclick="closeHelp()">&times;</span>
-            <h2 style="color: #00ff88;">HELP</h2>
-            <p style="margin: 20px 0; line-height: 1.6; font-size: 0.95rem;" class="lang" data-fr="Si vous avez besoin d'aide ou un problème, ouvrez un ticket sur le discord :" data-en="If you need help or have an issue, open a ticket on discord:">Si vous avez besoin d'aide ou un problème, ouvrez un ticket sur le discord :</p>
-            <a href="https://discord.gg/JKaUWpNd" class="btn-primary lang" data-fr="OUVRIR UN TICKET" data-en="OPEN A TICKET">OUVRIR UN TICKET</a>
-        </div>
-    </div>
-
-    <footer>
-        <p style="text-align: center; padding: 40px; color: #444; font-size: 0.9rem;" class="lang" data-fr="&copy; 2026 SK COMMUNITY - Tous droits réservés." data-en="&copy; 2026 SK COMMUNITY - All rights reserved.">&copy; 2026 SK COMMUNITY - Tous droits réservés.</p>
-    </footer>
 
     <script>
         function setLanguage(lang) {

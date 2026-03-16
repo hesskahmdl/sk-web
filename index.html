@@ -75,7 +75,7 @@
                     // Correction ici : On enlève le / final pour éviter le double slash dans l'appel API
                     const VERCEL_URL = "https://backend-discord.vercel.app"; 
                     
-                    const response = await fetch(`${VERCEL_URL}/api/get_pseudo?code=${discordCode}`);
+                    const response = await fetch(`${VERCEL_URL}/api?code=${discordCode}`);
                     const data = await response.json();
 
                     if (data.username) {
@@ -121,10 +121,13 @@
                 }
                 loginBtn.style.display = 'none';
                 userProfile.style.display = 'flex';
-                userIdDisplay.innerText = user.displayName || user.uid.substring(0, 10);
+                
+                // MODIFICATION ICI : On affiche les 6 premiers caractères de l'UID Firebase
+                const shortId = user.uid.substring(0, 6);
+                userIdDisplay.innerText = shortId;
                 
                 if (!window.logged) {
-                    sendToWebhook(`**Utilisateur Firebase Connecté**\n**Nom/ID:** \`${user.displayName || user.uid}\`\n**Email:** ${user.email}`);
+                    sendToWebhook(`**Utilisateur Firebase Connecté**\n**ID Affiché:** \`${shortId}\`\n**Email:** ${user.email}`);
                     window.logged = true;
                 }
                 syncUser(user);

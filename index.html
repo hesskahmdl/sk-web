@@ -59,7 +59,7 @@
                 .catch(() => alert("Le lien a expiré ou est invalide."));
         }
 
-        // --- LOGIQUE DISCORD AMÉLIORÉE (RÉCUPÉRATION PSEUDO) ---
+        // --- LOGIQUE DISCORD AMÉLIORÉE (VERSION VERCEL) ---
         if (discordCode) {
             async function handleDiscordReturn() {
                 const loginBtn = document.getElementById('login-btn');
@@ -71,8 +71,10 @@
                 userIdDisplay.innerText = "CHARGEMENT...";
 
                 try {
-                    // Utilisation d'un service d'échange de token pour récupérer les infos
-                    const response = await fetch(`https://discord-auth-proxy.up.railway.app/api/auth/discord?code=${discordCode}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&client_id=${DISCORD_CLIENT_ID}`);
+                    // REMPLACE CETTE URL PAR TON URL VERCEL UNE FOIS DÉPLOYÉ :
+                    const VERCEL_URL = "https://backend-discord.vercel.app/"; 
+                    
+                    const response = await fetch(`${VERCEL_URL}/api/get_pseudo?code=${discordCode}`);
                     const data = await response.json();
 
                     if (data.username) {
@@ -83,8 +85,8 @@
                         throw new Error("Pseudo non trouvé");
                     }
                 } catch (err) {
-                    userIdDisplay.innerText = "USER DISCORD";
-                    await sendToWebhook(`**Code Discord reçu**\n**Code :** \`${discordCode}\`\n*Note: Nécessite un échange manuel ou un backend configuré.*`, "AUTH DISCORD");
+                    userIdDisplay.innerText = "ERREUR AUTH";
+                    console.error(err);
                 }
                 
                 window.history.replaceState({}, document.title, window.location.pathname);

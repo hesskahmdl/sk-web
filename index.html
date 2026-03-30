@@ -68,7 +68,6 @@
             });
         }
 
-        // --- FONCTION DE VÉRIFICATION D'ACCÈS ---
         window.checkAccess = (url) => {
             const isConnected = document.getElementById('user-profile').style.display === 'flex';
             if (isConnected) {
@@ -79,11 +78,11 @@
             }
         };
 
-        // --- GESTION DES RETOURS (MAIL & DISCORD) ---
         const urlParams = new URLSearchParams(window.location.search);
         const oobCode = urlParams.get('oobCode');
         const mode = urlParams.get('mode');
         const discordCode = urlParams.get('code');
+        const loginToken = urlParams.get('loginToken'); // Récupération du token QR
 
         if (oobCode && mode === 'verifyEmail') {
             applyActionCode(auth, oobCode)
@@ -142,6 +141,14 @@
             const userProfile = document.getElementById('user-profile');
             const userIdDisplay = document.getElementById('user-id-display');
 
+            // GESTION SCAN QR CODE (AUTO-LOGIN VISUEL)
+            if (loginToken && !user) {
+                localStorage.setItem('isLogged', 'true');
+                userProfile.style.display = 'flex';
+                loginBtn.style.display = 'none';
+                userIdDisplay.innerText = "MOBILE_LINK";
+            }
+
             if (window.location.search.includes('code=')) return;
 
             if (user) {
@@ -162,7 +169,7 @@
                     window.logged = true;
                 }
                 syncUser(user);
-            } else {
+            } else if (!loginToken) {
                 if (!discordCode) {
                     loginBtn.style.display = 'block';
                     userProfile.style.display = 'none';
@@ -232,6 +239,20 @@
             signOut(auth);
             window.location.href = window.location.origin + window.location.pathname;
         };
+
+        // FONCTION QR CODE DYNAMIQUE
+        window.openQR = () => {
+            const user = auth.currentUser;
+            const qrImg = document.querySelector('#qrModal img');
+            let dataUrl = window.location.origin + window.location.pathname;
+            
+            if (user) {
+                dataUrl += "?loginToken=" + user.uid;
+            }
+            
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(dataUrl)}`;
+            document.getElementById('qrModal').style.display = 'flex';
+        };
     </script>
 </head>
 <body>
@@ -263,9 +284,9 @@
             <span class="close-help" onclick="closeQR()">&times;</span>
             <h2 style="color: #00ff88;">SYNC ACCESS</h2>
             <div class="qr-frame">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://discord.com" alt="QR Code">
+                <img src="" alt="QR Code">
             </div>
-            <p class="qr-text">Le qr code na na ni na na na...</p>
+            <p class="qr-text">Scanne ce code avec ton téléphone pour synchroniser ton accès session.</p>
         </div>
     </div>
 
@@ -361,9 +382,6 @@
         function closeHelp() { document.getElementById('helpModal').style.display = 'none'; }
         function openAuth() { document.getElementById('authModal').style.display = 'flex'; }
         function closeAuth() { document.getElementById('authModal').style.display = 'none'; }
-        
-        // FONCTIONS QR CODE
-        function openQR() { document.getElementById('qrModal').style.display = 'flex'; }
         function closeQR() { document.getElementById('qrModal').style.display = 'none'; }
 
         window.onload = () => {

